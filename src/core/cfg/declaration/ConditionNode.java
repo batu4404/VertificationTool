@@ -1,5 +1,6 @@
 package core.cfg.declaration;
 
+import spoon.reflect.code.CtExpression;
 
 /**
  * Node chứa biểu thức điều kiện và 2 nhánh else, then để biểu diễn
@@ -8,13 +9,14 @@ package core.cfg.declaration;
 public class ConditionNode extends CFGNode {
 	private CFGNode elseNode;
 	private CFGNode thenNode;
-	private String expression;	// biểu thức điều kiện
+	private CtExpression expression;	// biểu thức điều kiện
 
-	public String getExpression() {
+	
+	public CtExpression getExpression() {
 		return expression;
 	}
 
-	public void setExpression(String expression) {
+	public void setExpression(CtExpression expression) {
 		this.expression = expression;
 	}
 

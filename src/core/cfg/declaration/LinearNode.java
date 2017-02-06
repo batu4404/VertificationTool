@@ -14,6 +14,14 @@ public abstract class LinearNode extends CFGNode {
 	private CFGNode next;
 	private CtExpression expression;
 
+	public CtExpression getExpression() {
+		return expression;
+	}	
+
+	public void setExpression(CtExpression expression) {
+		this.expression = expression;
+	}
+
 	public CFGNode getNext() {
 		return next;
 	}
