@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/core/cfg/cfgbuilder/CFGBuilder.java=UTF-8
-encoding//src/core/cfg/declaration/BeforeNode.java=UTF-8
+encoding//src/core/cfg/declaration/BeginNode.java=UTF-8
 encoding//src/core/cfg/declaration/ConditionNode.java=UTF-8
 encoding//src/core/cfg/declaration/LinearNode.java=UTF-8
 encoding//src/core/cfg/declaration/NodeType.java=UTF-8
