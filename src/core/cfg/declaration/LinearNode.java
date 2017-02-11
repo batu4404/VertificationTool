@@ -1,25 +1,31 @@
 package core.cfg.declaration;
 
-import spoon.reflect.code.CtExpression;
+import spoon.reflect.code.CtStatement;
 
 /**
  * Class khai báo các node chi trỏ tới 1 node tiếp theo
  * chỉ chứa con trỏ next tới node tiếp theo
  * dùng để biểu diễn cho các câu lệnh bình thường trong chương trình
  */
-public abstract class LinearNode extends CFGNode {
+public class LinearNode extends CFGNode {
 	/**
 	 * con trỏ tới node tiếp theo
 	 */
 	private CFGNode next;
-	private CtExpression expression;
+	private CtStatement statement;
+	
+	public LinearNode() {}
+	
+	public LinearNode(CtStatement statement) {
+		this.statement = statement;
+	}
 
-	public CtExpression getExpression() {
-		return expression;
+	public CtStatement getStatement() {
+		return statement;
 	}	
 
-	public void setExpression(CtExpression expression) {
-		this.expression = expression;
+	public void setStatement(CtStatement statement) {
+		this.statement = statement;
 	}
 
 	public CFGNode getNext() {

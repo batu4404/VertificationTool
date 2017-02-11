@@ -1,6 +1,7 @@
 package core.utils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import spoon.compiler.SpoonCompiler;
@@ -62,6 +63,15 @@ public class LauncherSpoon {
 	
 	public void buildModel() {
 		modelBuilder.build();
+	}
+	
+	public CtModel getModel() {
+		return factory.getModel();
+	}
+	
+	public List<CtMethod> getMethods() {
+		CtModel model = factory.getModel();
+		return model.getElements(new TypeFilter(CtMethod.class));
 	}
 	
 	public static void main(String[] args) {
