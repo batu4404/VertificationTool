@@ -42,4 +42,12 @@ public class LinearNode extends CFGNode {
 	public String getExpressionString() {
 		return null;
 	}
+	
+	public String getConstraint() {
+		if (statement == null)
+			return "true";
+		else
+			return "Constaint"; //  lam sau
+		
+	}
 }

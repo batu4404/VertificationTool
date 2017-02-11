@@ -4,6 +4,9 @@ package core.cfg.declaration;
 public abstract class CFGNode {
 	private NodeType nodeType;
 	
+	public CFGNode() {
+		
+	}
 	
 	/**
 	 * 

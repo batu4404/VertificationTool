@@ -4,12 +4,16 @@ import java.io.File;
 import java.util.List;
 
 import core.cfg.declaration.BeginFor;
+import core.cfg.declaration.BeginIf;
 import core.cfg.declaration.CFGNode;
+import core.cfg.declaration.ConditionNode;
+import core.cfg.declaration.EndNode;
 import core.cfg.declaration.LinearNode;
 import core.utils.LauncherSpoon;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFor;
+import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtMethod;
 
@@ -37,7 +41,9 @@ public class CFGBuilder {
 	 */
 	public CFGNode generateCFG(CFGNode currentNode, CtStatement statement) {
 		CFGNode returnNode = null;
-		
+		if (statement == null) {
+			return currentNode;
+		}
 		if (statement instanceof CtFor) {
 			returnNode = generateCFG(currentNode, (CtFor) statement);
 		}
@@ -68,8 +74,34 @@ public class CFGBuilder {
 		currentNode.setNext(begin);
 		
 		currentNode = generateCFG(begin, forInit);
+//		currentNode = generateCFG(currentNode, )
 		
 		
+		
+		return null;
+	}
+	
+	/**
+	 * Xay dung CFG cho khoi lenh if-else va them vao CFG
+	 * @param currentNode: Node hien tai(cuoi cung) trong cfg truoc khi them cau lenh if vao
+	 * @param ctIf
+	 * @return : Node hien tai(cuoi cung) trong cfg sau khi them cau lenh if vao
+	 */
+	public CFGNode generateCFG(CFGNode currentNode, CtIf ctIf) {
+		
+		CtExpression condition = ctIf.getCondition();
+		CtStatement thenStatement = ctIf.getThenStatement();
+		CtStatement elseStatement = ctIf.getElseStatement();
+		
+		ConditionNode conditionNode = new ConditionNode(condition);
+		BeginIf begin = new BeginIf();
+		EndNode end = new EndNode();
+		
+		if (elseStatement == null) {
+			LinearNode elseNode = new LinearNode();
+			conditionNode.setElseNode(elseNode);
+			elseNode.setNext(end);
+		}
 		
 		
 		return null;
@@ -79,6 +111,8 @@ public class CFGBuilder {
 		
 		return null;
 	}
+	
+	
 	
 	public static void main(String[] args) {
 		LauncherSpoon launcher = new LauncherSpoon();

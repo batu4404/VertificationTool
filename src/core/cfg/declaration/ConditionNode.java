@@ -9,15 +9,18 @@ import spoon.reflect.code.CtExpression;
 public class ConditionNode extends CFGNode {
 	private CFGNode elseNode;
 	private CFGNode thenNode;
-	private CtExpression expression;	// biểu thức điều kiện
+	private CtExpression condition;	// biểu thức điều kiện
 
+	public ConditionNode(CtExpression condition) {
+		this.condition = condition;
+	}
 	
-	public CtExpression getExpression() {
-		return expression;
+	public CtExpression getCondition() {
+		return condition;
 	}
 
-	public void setExpression(CtExpression expression) {
-		this.expression = expression;
+	public void setExpression(CtExpression condition) {
+		this.condition = condition;
 	}
 
 	public CFGNode getElseNode() {
