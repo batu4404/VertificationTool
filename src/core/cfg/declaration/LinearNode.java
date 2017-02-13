@@ -11,7 +11,6 @@ public class LinearNode extends CFGNode {
 	/**
 	 * con trỏ tới node tiếp theo
 	 */
-	private CFGNode next;
 	private CtStatement statement;
 	
 	public LinearNode() {
@@ -28,14 +27,6 @@ public class LinearNode extends CFGNode {
 
 	public void setStatement(CtStatement statement) {
 		this.statement = statement;
-	}
-
-	public CFGNode getNext() {
-		return next;
-	}
-
-	public void setNext(CFGNode next) {
-		this.next = next;
 	}
 	
 	/**

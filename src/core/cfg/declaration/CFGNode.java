@@ -2,11 +2,10 @@ package core.cfg.declaration;
 
 
 public abstract class CFGNode {
-	private NodeType nodeType;
 	
-	public CFGNode() {
-		
-	}
+	CFGNode next;
+	
+	public CFGNode() {}
 	
 	/**
 	 * 
@@ -16,11 +15,7 @@ public abstract class CFGNode {
 		
 	}
 
-	public NodeType getNodeType() {
-		return nodeType;
-	}
-
-	public void setNodeType(NodeType nodeType) {
-		this.nodeType = nodeType;
+	public CFGNode getNext() {;
+		return next;
 	}
 }

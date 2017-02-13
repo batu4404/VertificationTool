@@ -107,14 +107,26 @@ public class CFGBuilder {
 	}
 	
 	public PairNode generateCFG(List<CtStatement> statements) {
-		PairNode PairNode = 
+		PairNode pairNode = new PairNode();
+		PairNode pairTemp;
 		
-		for (CtStatement st: statements) {
-			
+	//	CFGNode begin;
+		CFGNode end;
+		
+		pairTemp = generateCFG(statements.get(0));
+		pairNode.setBegin(pairTemp.getBegin());
+	//	pairNode.setEnd(pairTemp.getEnd());
+		end = pairNode.getEnd();
+		
+		for (int i = 1; i < statements.size(); i++) {
+			pairTemp = generateCFG(statements.get(i));
+			end.setNext(pairTemp.getBegin());
+			end = pairTemp.getEnd();
 		}
 		
+		pairNode.setEnd(end);
 		
-		return null;
+		return pairNode;
 	}
 	
 	

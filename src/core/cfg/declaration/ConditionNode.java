@@ -5,10 +5,12 @@ import spoon.reflect.code.CtExpression;
 /**
  * Node chứa biểu thức điều kiện và 2 nhánh else, then để biểu diễn
  * lệnh if-else, điều kiện trong vòng, lặp,...
+ * 
  */
 public class ConditionNode extends CFGNode {
-	private CFGNode elseNode;
-	private CFGNode thenNode;
+	// thuộc tính next kế thừa từ CFGNode trỏ tới nhánh then
+	// của biểu thức điều kiện
+	private CFGNode elseNode;	// trỏ tới nhánh else
 	private CtExpression condition;	// biểu thức điều kiện
 
 	public ConditionNode(CtExpression condition) {
@@ -33,10 +35,10 @@ public class ConditionNode extends CFGNode {
 	}
 	
 	public CFGNode getThenNode() {
-		return thenNode;
+		return next;
 	}
 	
 	public void setThenNode(CFGNode thenNode) {
-		this.thenNode = thenNode;
+		next = thenNode;
 	}
 }

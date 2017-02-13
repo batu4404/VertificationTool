@@ -15,5 +15,5 @@ public class BeginNode extends CFGNode {
 
 	public void setEndNode(CFGNode endNode) {
 		this.endNode = endNode;
-	} 
+	}
 }
