@@ -3,27 +3,13 @@ public class TestSpoon
 {
 
 
-	public static int testFor0() {
+	public static int testThoi() {
 		int x = 1;
 		int sum = 0;
-		sum = x++;
-		for(;;) {
-			x++;
-			if(x > 5)
-				break;
-		}
 		
-		for(int i = 0; i < 10; i++) {
-			sum += i;
-			if(sum == 2)
-				return sum;
-			if(sum == 4)
-				break;
-			if(sum == 6)
-				continue;
-			sum += sum;
-		}
-	
+		
+		
+		
 		return sum;
 	}
 /*	

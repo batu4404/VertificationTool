@@ -9,6 +9,7 @@ import core.cfg.declaration.CFGNode;
 import core.cfg.declaration.ConditionNode;
 import core.cfg.declaration.EndNode;
 import core.cfg.declaration.LinearNode;
+import core.cfg.declaration.PairNode;
 import core.utils.LauncherSpoon;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtExpression;
@@ -35,27 +36,25 @@ public class CFGBuilder {
 	
 	
 	/**
-	 * @param method: cau lenh hien tai va node hien tai
-	 * @return: node bắt đầu của method
-	 * tạm thời chưa làm gì
+	 * @param statement: cau can them vao cfg
+	 * @return: doi tuong kieu PairNode chua node dau và node cuối
+	 *        của đoạn cfg vừa sinh ra từ statement
 	 */
-	public CFGNode generateCFG(CFGNode currentNode, CtStatement statement) {
-		CFGNode returnNode = null;
-		if (statement == null) {
-			return currentNode;
-		}
+	public PairNode generateCFG(CtStatement statement) {
+		PairNode pairNode = null;
+		
 		if (statement instanceof CtFor) {
-			returnNode = generateCFG(currentNode, (CtFor) statement);
+			pairNode = generateCFG((CtFor) statement);
+		}
+		else if (statement instanceof CtIf) {
+			pairNode = generateCFG((CtIf) statement);
 		}
 		else {
-			returnNode = new LinearNode(statement);
-		}
-		for(int i = 0; i < 2; i ++){
-			int a = 0;
+			LinearNode normal = new LinearNode(statement);
+			pairNode = new PairNode(normal, normal);
 		}
 		
-		
-		return returnNode;
+		return pairNode;
 	}
 	
 	/**
@@ -63,20 +62,14 @@ public class CFGBuilder {
 	 * @param ctFor
 	 * @return : Node hien tai(cuoi cung) trong cfg sau khi them vong lap for vao
 	 */
-	public CFGNode generateCFG(CFGNode currentNode, CtFor ctFor) {
+	public PairNode generateCFG(CtFor ctFor) {
 		List<CtStatement> forInit = ctFor.getForInit();   //cau lenh khoi tao cac bien khoi tao(init) vd nhu 'int i = 0'
 		CtExpression conditionExp = ctFor.getExpression();	// dieu kien lap
 		CtStatement body = ctFor.getBody(); //lay than vong lap
 		List<CtStatement> forUpdate = ctFor.getForUpdate(); //lay phan update
 		
 		
-		BeginFor begin = new BeginFor();
-		currentNode.setNext(begin);
-		
-		currentNode = generateCFG(begin, forInit);
-//		currentNode = generateCFG(currentNode, )
-		
-		
+		BeginFor begin = new BeginFor();		
 		
 		return null;
 	}
@@ -87,7 +80,9 @@ public class CFGBuilder {
 	 * @param ctIf
 	 * @return : Node hien tai(cuoi cung) trong cfg sau khi them cau lenh if vao
 	 */
-	public CFGNode generateCFG(CFGNode currentNode, CtIf ctIf) {
+	public PairNode generateCFG(CtIf ctIf) {
+		
+		PairNode pair = new PairNode();
 		
 		CtExpression condition = ctIf.getCondition();
 		CtStatement thenStatement = ctIf.getThenStatement();
@@ -95,19 +90,29 @@ public class CFGBuilder {
 		
 		ConditionNode conditionNode = new ConditionNode(condition);
 		BeginIf begin = new BeginIf();
+		begin.setNext(conditionNode);
+		
 		EndNode end = new EndNode();
 		
-		if (elseStatement == null) {
-			LinearNode elseNode = new LinearNode();
-			conditionNode.setElseNode(elseNode);
-			elseNode.setNext(end);
-		}
+		PairNode elseCFG = generateCFG(elseStatement);
+		PairNode thenCFG = generateCFG(thenStatement);
 		
+		conditionNode.setThenNode(thenCFG.getBegin());
+		thenCFG.getEnd().setNext(begin);
 		
-		return null;
+		conditionNode.setElseNode(elseCFG.getBegin());
+		elseCFG.getEnd().setNext(end);
+		
+		return pair;
 	}
 	
-	public CFGNode generateCFG(CFGNode currentNode, List<CtStatement> statements) {
+	public PairNode generateCFG(List<CtStatement> statements) {
+		PairNode PairNode = 
+		
+		for (CtStatement st: statements) {
+			
+		}
+		
 		
 		return null;
 	}

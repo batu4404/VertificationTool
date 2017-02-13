@@ -14,7 +14,9 @@ public class LinearNode extends CFGNode {
 	private CFGNode next;
 	private CtStatement statement;
 	
-	public LinearNode() {}
+	public LinearNode() {
+
+	}
 	
 	public LinearNode(CtStatement statement) {
 		this.statement = statement;
@@ -43,6 +45,7 @@ public class LinearNode extends CFGNode {
 		return null;
 	}
 	
+	//sau khi unfold cfg 
 	public String getConstraint() {
 		if (statement == null)
 			return "true";
