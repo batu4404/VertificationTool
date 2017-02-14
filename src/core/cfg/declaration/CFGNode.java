@@ -12,7 +12,7 @@ public abstract class CFGNode {
 	 * @param next
 	 */
 	public void setNext(CFGNode next) {
-		
+		this.next = next;
 	}
 
 	public CFGNode getNext() {;

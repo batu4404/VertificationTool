@@ -2,7 +2,7 @@ package core.cfg.declaration;
 
 
 /**
- * Chứa con trỏ tới đầu và cuối của cfg
+ * Chá»©a con trá»� tá»›i Ä‘áº§u vÃ  cuá»‘i cá»§a cfg
  */
 public class PairNode  {
 	
@@ -26,7 +26,7 @@ public class PairNode  {
 	}
 	
 	public CFGNode getEnd() {
-		return mBegin;
+		return mEnd;
 	}
 	
 	public void setEnd(CFGNode end) {

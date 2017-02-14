@@ -6,11 +6,16 @@ public class TestSpoon
 	public static int testThoi() {
 		int x = 1;
 		int sum = 0;
+		x = 2;
+		x = sum + x;
 		
+		if (x == sum) {
+			sum = 1;
+		}
+		else 
+			sum = 0;
 		
-		
-		
-		return sum;
+		return 1;
 	}
 /*	
 	public static int testFor1() {

@@ -21,7 +21,7 @@ public class ConditionNode extends CFGNode {
 		return condition;
 	}
 
-	public void setExpression(CtExpression condition) {
+	public void setCondition(CtExpression condition) {
 		this.condition = condition;
 	}
 
@@ -40,5 +40,9 @@ public class ConditionNode extends CFGNode {
 	
 	public void setThenNode(CFGNode thenNode) {
 		next = thenNode;
+	}
+	
+	public String getConstrait() {
+		return condition.toString();
 	}
 }

@@ -12,6 +12,7 @@ import core.cfg.declaration.LinearNode;
 import core.cfg.declaration.PairNode;
 import core.utils.LauncherSpoon;
 import spoon.reflect.code.CtAssignment;
+import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFor;
 import spoon.reflect.code.CtIf;
@@ -82,8 +83,6 @@ public class CFGBuilder {
 	 */
 	public PairNode generateCFG(CtIf ctIf) {
 		
-		PairNode pair = new PairNode();
-		
 		CtExpression condition = ctIf.getCondition();
 		CtStatement thenStatement = ctIf.getThenStatement();
 		CtStatement elseStatement = ctIf.getElseStatement();
@@ -98,14 +97,25 @@ public class CFGBuilder {
 		PairNode thenCFG = generateCFG(thenStatement);
 		
 		conditionNode.setThenNode(thenCFG.getBegin());
-		thenCFG.getEnd().setNext(begin);
+		thenCFG.getEnd().setNext(end);
 		
 		conditionNode.setElseNode(elseCFG.getBegin());
 		elseCFG.getEnd().setNext(end);
 		
+		begin.setEndNode(end);
+		PairNode pair = new PairNode(begin, end);
+		
+		System.out.println("if-else:");
+		printCFG(pair);
+		
 		return pair;
 	}
 	
+	/**
+	 * @param statements: danh sach các câu lênh để sinh ra cfg
+	 * @return: đối tượng chứa 2 tham chiếu đến 2 node đầu và cuối của cfg 
+	 *  		được sinh ra từ statements
+	 */
 	public PairNode generateCFG(List<CtStatement> statements) {
 		PairNode pairNode = new PairNode();
 		PairNode pairTemp;
@@ -115,12 +125,15 @@ public class CFGBuilder {
 		
 		pairTemp = generateCFG(statements.get(0));
 		pairNode.setBegin(pairTemp.getBegin());
-	//	pairNode.setEnd(pairTemp.getEnd());
-		end = pairNode.getEnd();
+	
+		end = pairTemp.getEnd();
 		
 		for (int i = 1; i < statements.size(); i++) {
+
 			pairTemp = generateCFG(statements.get(i));
+			
 			end.setNext(pairTemp.getBegin());
+
 			end = pairTemp.getEnd();
 		}
 		
@@ -129,7 +142,62 @@ public class CFGBuilder {
 		return pairNode;
 	}
 	
+	public static void printCFG(PairNode cfg) {
+		CFGNode begin = cfg.getBegin();
 	
+		printCFG(cfg.getBegin(), cfg.getEnd());
+	}
+	
+	public static void printCFG(CFGNode node, CFGNode end) {
+		if (node == null || node == end || node instanceof EndNode) {
+			return;
+		}	
+		else if (node instanceof LinearNode) {
+			System.out.println(((LinearNode) node).getConstraint());	
+			
+			printCFG(node.getNext(), end);
+		}
+		else if (node instanceof BeginIf) {
+			BeginIf begin = (BeginIf) node;
+			printCFG(begin.getNext(), end);
+			printCFG(begin.getEndNode().getNext(), end);
+		}
+		else if (node instanceof ConditionNode) {
+			ConditionNode cn = (ConditionNode) node;
+			System.out.println("if");
+			printCFG(cn.getThenNode(), end);
+			printCFG(cn.getElseNode(), end);
+		}
+		else {
+			printCFG(node.getNext(), end);
+		}
+	}
+
+	
+	public static void printCFG(CFGNode node) {
+		
+		if (node == null || node instanceof EndNode) {
+			return;
+		}	
+		else if (node instanceof LinearNode) {
+			System.out.println(((LinearNode) node).getConstraint());	
+			printCFG(node.getNext());
+		}
+		else if (node instanceof BeginIf) {
+			BeginIf begin = (BeginIf) node;
+			printCFG(begin.getNext());
+			printCFG(begin.getEndNode().getNext());
+		}
+		else if (node instanceof ConditionNode) {
+			ConditionNode cn = (ConditionNode) node;
+			System.out.println("if");
+			printCFG(cn.getThenNode());
+			printCFG(cn.getElseNode());
+		}
+		else {
+			printCFG(node.getNext());
+		}
+	}
 	
 	public static void main(String[] args) {
 		LauncherSpoon launcher = new LauncherSpoon();
@@ -138,5 +206,16 @@ public class CFGBuilder {
 		launcher.buildModel();
 		List<CtMethod> methods = launcher.getMethods();
 		System.out.println(methods.get(0));
+		
+		CtMethod method = methods.get(0);
+		CtBlock body = method.getBody();
+		List<CtStatement> statements = body.getStatements();
+		
+		CFGBuilder builder = new CFGBuilder();
+		
+		PairNode pair = builder.generateCFG(statements);
+		
+		System.out.println("cfg(test): ");
+		printCFG(pair.getBegin());
 	}
 }

@@ -41,7 +41,7 @@ public class LinearNode extends CFGNode {
 		if (statement == null)
 			return "true";
 		else
-			return "Constaint"; //  lam sau
+			return statement.toString(); //  lam sau
 		
 	}
 }
