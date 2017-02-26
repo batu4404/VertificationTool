@@ -18,6 +18,7 @@ import spoon.reflect.code.CtFor;
 import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtMethod;
+import spoon.support.reflect.code.CtBlockImpl;
 
 public class CFGBuilder {
 	CtMethod method;
@@ -50,6 +51,9 @@ public class CFGBuilder {
 		else if (statement instanceof CtIf) {
 			pairNode = generateCFG((CtIf) statement);
 		}
+		else if (statement instanceof CtBlock) {
+			pairNode = generateCFG(((CtBlock)statement).getStatements());
+		}
 		else {
 			LinearNode normal = new LinearNode(statement);
 			pairNode = new PairNode(normal, normal);
@@ -66,11 +70,25 @@ public class CFGBuilder {
 	public PairNode generateCFG(CtFor ctFor) {
 		List<CtStatement> forInit = ctFor.getForInit();   //cau lenh khoi tao cac bien khoi tao(init) vd nhu 'int i = 0'
 		CtExpression conditionExp = ctFor.getExpression();	// dieu kien lap
-		CtStatement body = ctFor.getBody(); //lay than vong lap
+		CtStatement forBody = ctFor.getBody(); //lay than vong lap
 		List<CtStatement> forUpdate = ctFor.getForUpdate(); //lay phan update
 		
 		
-		BeginFor begin = new BeginFor();		
+		BeginFor begin = new BeginFor();	
+		EndNode end = new EndNode();
+		
+		PairNode init = generateCFG(forInit);
+		
+		
+		ConditionNode condition = new ConditionNode(conditionExp);
+		
+		PairNode body = generateCFG(forBody);
+		
+		PairNode update = generateCFG(forUpdate);
+		
+		begin.setNext(init.getBegin());
+		init.getEnd().setNext(condition);
+		
 		
 		return null;
 	}
@@ -172,7 +190,6 @@ public class CFGBuilder {
 			printCFG(node.getNext(), end);
 		}
 	}
-
 	
 	public static void printCFG(CFGNode node) {
 		

@@ -4,13 +4,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.internal.compiler.ast.Literal;
+
 import spoon.compiler.SpoonCompiler;
 import spoon.compiler.SpoonResource;
 import spoon.reflect.CtModel;
+import spoon.reflect.code.CtLiteral;
+import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.factory.FactoryImpl;
+import spoon.reflect.reference.CtLocalVariableReference;
+import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.Filter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.DefaultCoreFactory;
@@ -74,6 +81,10 @@ public class LauncherSpoon {
 		return model.getElements(new TypeFilter(CtMethod.class));
 	}
 	
+	public Factory getFactory() {
+		return factory;
+	}
+	
 	public static void main(String[] args) {
 		
 		System.out.println("hello world");
@@ -86,6 +97,15 @@ public class LauncherSpoon {
 		}
 		launcher.addInputResource(resource);
 		launcher.buildModel();
+		
+		String str = "a = 10";
+		Factory factory = launcher.getFactory();
+//		CtLocalVariableReference left = factory.Core()
+//						.createLocalVariableReference()
+//						.setType(CtTypeReference.);
+//		CtLiteral Literal = factory.Core().createLiteral();
+//		CtExpression exp = launcher.getFactory().Core().createBinaryOperator();
+		
 	}
 
 }
