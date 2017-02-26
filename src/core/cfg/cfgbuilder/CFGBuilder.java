@@ -17,6 +17,7 @@ import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFor;
 import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtSwitch;
 import spoon.reflect.declaration.CtMethod;
 import spoon.support.reflect.code.CtBlockImpl;
 
@@ -79,7 +80,6 @@ public class CFGBuilder {
 		
 		PairNode init = generateCFG(forInit);
 		
-		
 		ConditionNode condition = new ConditionNode(conditionExp);
 		
 		PairNode body = generateCFG(forBody);
@@ -90,7 +90,7 @@ public class CFGBuilder {
 		init.getEnd().setNext(condition);
 		
 		
-		return null;
+		return new PairNode(begin, end);
 	}
 	
 	/**
@@ -127,6 +127,16 @@ public class CFGBuilder {
 		printCFG(pair);
 		
 		return pair;
+	}
+	
+	/**
+	 * Xay dung CFG cho khoi lenh switch-case
+	 * @param ctSwitch: khoi lenh switch-case
+	 * @return : đối tượng chứa 2 tham chiếu đến 2 node đầu và cuối của cfg 
+	 *  		được sinh ra từ khoi lenh switch case
+	 */
+	public PairNode generateCFG(CtSwitch ctSwitch) {
+		return null;
 	}
 	
 	/**
