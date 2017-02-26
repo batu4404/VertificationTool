@@ -160,12 +160,18 @@ public class CFGBuilder {
 		return pairNode;
 	}
 	
+	/*
+	 * in cfg
+	 */
 	public static void printCFG(PairNode cfg) {
 		CFGNode begin = cfg.getBegin();
 	
 		printCFG(cfg.getBegin(), cfg.getEnd());
 	}
 	
+	/*
+	 * in cfg giua 2 node begin va end
+	 */
 	public static void printCFG(CFGNode node, CFGNode end) {
 		if (node == null || node == end || node instanceof EndNode) {
 			return;
@@ -191,6 +197,9 @@ public class CFGBuilder {
 		}
 	}
 	
+	/*
+	 * in cfg cho den khi gap end node
+	 */
 	public static void printCFG(CFGNode node) {
 		
 		if (node == null || node instanceof EndNode) {
@@ -215,6 +224,7 @@ public class CFGBuilder {
 			printCFG(node.getNext());
 		}
 	}
+	
 	
 	public static void main(String[] args) {
 		LauncherSpoon launcher = new LauncherSpoon();
