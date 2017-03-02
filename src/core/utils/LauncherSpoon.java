@@ -9,6 +9,9 @@ import org.eclipse.jdt.internal.compiler.ast.Literal;
 import spoon.compiler.SpoonCompiler;
 import spoon.compiler.SpoonResource;
 import spoon.reflect.CtModel;
+import spoon.reflect.code.BinaryOperatorKind;
+import spoon.reflect.code.CtBinaryOperator;
+import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtMethod;
@@ -100,12 +103,20 @@ public class LauncherSpoon {
 		
 		String str = "a = 10";
 		Factory factory = launcher.getFactory();
-//		CtLocalVariableReference left = factory.Core()
-//						.createLocalVariableReference()
-//						.setType(CtTypeReference.);
-//		CtLiteral Literal = factory.Core().createLiteral();
-//		CtExpression exp = launcher.getFactory().Core().createBinaryOperator();
+		CtExpression left = factory.Core()
+						.createLocalVariableReference()
+						.setType(null)
+						.setSimpleName("a");
 		
+		CtExpression right = factory.Core().createLiteral().setValue("123");
+		
+		CtBinaryOperator compare = launcher.getFactory().Core()
+				.createBinaryOperator()
+				.setLeftHandOperand(left)
+				.setKind(BinaryOperatorKind.EQ)
+				.setRightHandOperand(right);
+		
+		System.out.println(compare.toString());
 	}
 
 }

@@ -19,10 +19,14 @@ import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtSwitch;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.factory.Factory;
 import spoon.support.reflect.code.CtBlockImpl;
 
 public class CFGBuilder {
 	CtMethod method;
+	
+	// factory to create spoon nodes
+	Factory factory;
 	
 	CFGBuilder(){}
 	
@@ -85,6 +89,10 @@ public class CFGBuilder {
 		PairNode body = generateCFG(forBody);
 		
 		PairNode update = generateCFG(forUpdate);
+		
+		BeginIf beginAUnfold = new BeginIf();
+		
+		
 		
 		begin.setNext(init.getBegin());
 		init.getEnd().setNext(condition);
@@ -170,6 +178,14 @@ public class CFGBuilder {
 		return pairNode;
 	}
 	
+	/**
+	 * nối 2 đoạn cfg dc lưu trong 2 biến PairNode 
+	 * @return
+	 */
+	private PairNode concat() {
+		return null;
+	}
+	
 	public static void printCFG(PairNode cfg) {
 		CFGNode begin = cfg.getBegin();
 	
@@ -177,6 +193,7 @@ public class CFGBuilder {
 	}
 	
 	public static void printCFG(CFGNode node, CFGNode end) {
+		
 		if (node == null || node == end || node instanceof EndNode) {
 			return;
 		}	
