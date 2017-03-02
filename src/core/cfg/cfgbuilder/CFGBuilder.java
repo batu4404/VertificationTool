@@ -5,25 +5,37 @@ import java.util.List;
 
 import core.cfg.declaration.BeginFor;
 import core.cfg.declaration.BeginIf;
+import core.cfg.declaration.BeginNode;
 import core.cfg.declaration.CFGNode;
 import core.cfg.declaration.ConditionNode;
 import core.cfg.declaration.EndNode;
 import core.cfg.declaration.LinearNode;
 import core.cfg.declaration.PairNode;
 import core.utils.LauncherSpoon;
+import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtAssignment;
+import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtBlock;
+import spoon.reflect.code.CtCase;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFor;
 import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtSwitch;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.factory.Factory;
 import spoon.support.reflect.code.CtBlockImpl;
 
 public class CFGBuilder {
 	CtMethod method;
 	
+	Factory factory;
+	
 	CFGBuilder(){}
+	
+	CFGBuilder(Factory factory){
+		this.factory = factory;
+	}
 	
 	/**
 	 * @param method: ast của method sinh ra từ spoon
@@ -54,6 +66,9 @@ public class CFGBuilder {
 		else if (statement instanceof CtBlock) {
 			pairNode = generateCFG(((CtBlock)statement).getStatements());
 		}
+		else if(statement instanceof CtSwitch){
+			pairNode = generateCFG(((CtSwitch)statement));
+		}
 		else {
 			LinearNode normal = new LinearNode(statement);
 			pairNode = new PairNode(normal, normal);
@@ -79,7 +94,6 @@ public class CFGBuilder {
 		
 		PairNode init = generateCFG(forInit);
 		
-		
 		ConditionNode condition = new ConditionNode(conditionExp);
 		
 		PairNode body = generateCFG(forBody);
@@ -90,7 +104,7 @@ public class CFGBuilder {
 		init.getEnd().setNext(condition);
 		
 		
-		return null;
+		return new PairNode(begin, end);
 	}
 	
 	/**
@@ -130,6 +144,62 @@ public class CFGBuilder {
 	}
 	
 	/**
+	 * Xay dung CFG cho khoi lenh switch-case
+	 * @param ctSwitch: khoi lenh switch-case
+	 * @return : đối tượng chứa 2 tham chiếu đến 2 node đầu và cuối của cfg 
+	 *  		được sinh ra từ khoi lenh switch case
+	 */
+	public PairNode generateCFG(CtSwitch ctSwitch) {
+		System.out.println("switch");
+		BeginIf begin = new BeginIf();
+		EndNode end = new EndNode();
+		//System.out.print(ctSwitch.getCases());
+		List<CtCase> ctCase = ctSwitch.getCases();
+		CtExpression selector = ctSwitch.getSelector();
+		
+		//nestedNode la Node dung de noi cac case lai voi nhau, lam tu duoi len thi ban dau nested node se la khoi end
+		CFGNode nestedNode = end;
+		//sinh CFG cho cac Case tu duoi len tren
+		for(int i = ctCase.size() - 1; i >= 0; i--){
+			CtCase c = ctCase.get(i);
+			CtExpression expression = c.getCaseExpression();
+			if(i == ctCase.size() - 1 && null == expression){
+				// khoi cuoi cung la khoi default
+				c.getStatements().remove(c.getStatements().size()-1);
+				PairNode element = generateCFG(c.getStatements());
+				System.out.println("size: " + c.getStatements());
+				element.setEnd(nestedNode);
+				nestedNode = element.getBegin();
+			}
+			
+			else{
+				CtBinaryOperator compare = factory.Core()
+						.createBinaryOperator()
+						.setLeftHandOperand(selector)
+						.setKind(BinaryOperatorKind.EQ)
+						.setRightHandOperand(expression);	
+				ConditionNode condition = new ConditionNode(compare);
+				c.getStatements().remove(c.getStatements().size()-1);
+				PairNode element = generateCFG(c.getStatements());
+				element.setEnd(end);
+				System.out.println("size: " + c.getStatements());
+				condition.setThenNode(element.getBegin());
+				condition.setElseNode(nestedNode);
+				nestedNode = condition;
+			}
+		}
+		
+		begin.setNext(nestedNode);
+		begin.setEndNode(end);
+		
+		
+		
+		printCFG(begin);
+		
+		return new PairNode(begin, end);
+	}
+	
+	/**
 	 * @param statements: danh sach các câu lênh để sinh ra cfg
 	 * @return: đối tượng chứa 2 tham chiếu đến 2 node đầu và cuối của cfg 
 	 *  		được sinh ra từ statements
@@ -138,8 +208,14 @@ public class CFGBuilder {
 		PairNode pairNode = new PairNode();
 		PairNode pairTemp;
 		
-	//	CFGNode begin;
+		BeginNode begin;
 		CFGNode end;
+		if(0 == statements.size()){
+			begin = new BeginNode();
+			end = new EndNode();
+			begin.setNext(end);
+			return new PairNode(begin, end);
+		}
 		
 		pairTemp = generateCFG(statements.get(0));
 		pairNode.setBegin(pairTemp.getBegin());
@@ -188,7 +264,7 @@ public class CFGBuilder {
 		}
 		else if (node instanceof ConditionNode) {
 			ConditionNode cn = (ConditionNode) node;
-			System.out.println("if");
+			System.out.println("if ( " + cn.getCondition() + " )");
 			printCFG(cn.getThenNode(), end);
 			printCFG(cn.getElseNode(), end);
 		}
@@ -216,7 +292,7 @@ public class CFGBuilder {
 		}
 		else if (node instanceof ConditionNode) {
 			ConditionNode cn = (ConditionNode) node;
-			System.out.println("if");
+			System.out.println("if ( " + cn.getCondition() + " )");
 			printCFG(cn.getThenNode());
 			printCFG(cn.getElseNode());
 		}
@@ -226,23 +302,28 @@ public class CFGBuilder {
 	}
 	
 	
+	public void setFactory(Factory factory) {
+		this.factory = factory;
+	}
+	
 	public static void main(String[] args) {
 		LauncherSpoon launcher = new LauncherSpoon();
 		String pathFile = "TestSpoon.java";
 		launcher.addInputResource(pathFile);
 		launcher.buildModel();
 		List<CtMethod> methods = launcher.getMethods();
-		System.out.println(methods.get(0));
+		//System.out.println(methods.get(0));
 		
 		CtMethod method = methods.get(0);
 		CtBlock body = method.getBody();
 		List<CtStatement> statements = body.getStatements();
 		
-		CFGBuilder builder = new CFGBuilder();
+		Factory factory = launcher.getFactory();
+		CFGBuilder builder = new CFGBuilder(factory);
 		
 		PairNode pair = builder.generateCFG(statements);
 		
-		System.out.println("cfg(test): ");
-		printCFG(pair.getBegin());
+	//	System.out.println("cfg(test): ");
+	//	printCFG(pair.getBegin());
 	}
 }

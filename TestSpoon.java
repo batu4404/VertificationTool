@@ -4,7 +4,7 @@ public class TestSpoon
 
 
 	public static int testThoi() {
-		int x = 1;
+		/*int x = 1;
 		int sum = 0;
 		x = 2;
 		x = sum + x;
@@ -15,6 +15,31 @@ public class TestSpoon
 		else 
 			sum = 0;
 		
+		return 1;*/
+		int x = 0;
+		switch(x){
+		case 0:
+			x = 2;
+			break;
+		case 1:
+			x = 3;
+			x=4;
+			x=5;
+			break;
+		case 3:
+			x = 6;
+			x=7;
+			x=8;
+			break;
+		case 5:
+			x = 98;
+			x=99;
+			x=100;
+			break;
+		default:
+			x = 1;
+			break;
+		}
 		return 1;
 	}
 /*	
