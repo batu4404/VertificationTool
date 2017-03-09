@@ -1,5 +1,6 @@
 package core.cfg.declaration;
 
+import core.utils.VariableManagement;
 
 public abstract class CFGNode {
 	
@@ -18,4 +19,10 @@ public abstract class CFGNode {
 	public CFGNode getNext() {;
 		return next;
 	}
+	
+	public String getConstraint() {
+		return "n/a";
+	}
+	
+	public void index(VariableManagement vm) {};
 }
