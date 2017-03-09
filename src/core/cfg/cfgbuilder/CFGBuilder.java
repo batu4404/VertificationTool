@@ -16,7 +16,7 @@ import core.cfg.declaration.PairNode;
 import core.cfg.declaration.SyncNode;
 import core.utils.LauncherSpoon;
 import core.utils.Variable;
-import core.utils.VariableManagement;
+import core.utils.VariableManager;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtBinaryOperator;
@@ -471,7 +471,7 @@ public class CFGBuilder {
 		String type;
 		Variable var;
 		
-		VariableManagement vm = new VariableManagement();
+		VariableManager vm = new VariableManager();
 		List<CtParameter> params = method.getParameters();
 		for (CtParameter param: params) {
 			var = new Variable(param.getType().toString(), param.getSimpleName());

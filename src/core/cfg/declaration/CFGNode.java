@@ -1,6 +1,6 @@
 package core.cfg.declaration;
 
-import core.utils.VariableManagement;
+import core.utils.VariableManager;
 
 public abstract class CFGNode {
 	
@@ -24,5 +24,5 @@ public abstract class CFGNode {
 		return "n/a";
 	}
 	
-	public void index(VariableManagement vm) {};
+	public void index(VariableManager vm) {};
 }

@@ -7,18 +7,18 @@ import java.util.List;
  * @author lenovo
  * luu tru, quan ly cac bien trong method
  */
-public class VariableManagement {
+public class VariableManager {
 	List<Variable> listVariables;
 	
-	public VariableManagement() {
+	public VariableManager() {
 		listVariables = new ArrayList<>();
 	}
 	
-	public VariableManagement(VariableManagement other) {
+	public VariableManager(VariableManager other) {
 		copyList(other.listVariables);
 	}
 	
-	public VariableManagement(List<Variable> listVariables) {
+	public VariableManager(List<Variable> listVariables) {
 		this.listVariables = listVariables;
 	}
 
@@ -62,8 +62,8 @@ public class VariableManagement {
 		return listVariables.get(index);
 	}
 	
-	public VariableManagement clone() {
-		return new VariableManagement(this);
+	public VariableManager clone() {
+		return new VariableManager(this);
 	}
 	
 	private void copyList(List<Variable> list) {

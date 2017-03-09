@@ -19,7 +19,7 @@ import spoon.reflect.reference.CtVariableReference;
  */
 public class Index {
 	
-	public static void index(CtElement element, VariableManagement vm) {
+	public static void index(CtElement element, VariableManager vm) {
 		
 		if (element instanceof CtBinaryOperator) {
 			indexBinaryOperator((CtBinaryOperator) element, vm);
@@ -43,7 +43,7 @@ public class Index {
 		}
 	}
 	
-	private static void indexBinaryOperator(CtBinaryOperator binOp, VariableManagement vm) {
+	private static void indexBinaryOperator(CtBinaryOperator binOp, VariableManager vm) {
 		CtExpression left = binOp.getLeftHandOperand();
 		CtExpression right = binOp.getRightHandOperand();
 		
@@ -51,7 +51,7 @@ public class Index {
 		index(right, vm);
 	}
 	
-	private static void indexAssignment(CtAssignment ass, VariableManagement vm) {
+	private static void indexAssignment(CtAssignment ass, VariableManager vm) {
 		
 		CtExpression assignment = ass.getAssignment();
 		index(assignment, vm);
@@ -67,7 +67,7 @@ public class Index {
 	
 	}
 	
-	private static void indexLocalVariable(CtLocalVariable localVar, VariableManagement vm) {
+	private static void indexLocalVariable(CtLocalVariable localVar, VariableManager vm) {
 		CtExpression assignment = localVar.getAssignment();
 		index(assignment, vm);
 		Variable var = vm.getVariableByName(localVar.getSimpleName());

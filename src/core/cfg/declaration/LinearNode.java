@@ -2,7 +2,7 @@ package core.cfg.declaration;
 
 import core.utils.Index;
 import core.utils.SpoonHelper;
-import core.utils.VariableManagement;
+import core.utils.VariableManager;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtBinaryOperator;
@@ -62,7 +62,7 @@ public class LinearNode extends CFGNode {
 		
 	}
 	
-	public void index(VariableManagement vm) {
+	public void index(VariableManager vm) {
 		Index.index(statement, vm);
 	}
 	

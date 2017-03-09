@@ -2,7 +2,7 @@ package core.cfg.declaration;
 
 import core.utils.Index;
 import core.utils.Variable;
-import core.utils.VariableManagement;
+import core.utils.VariableManager;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtExpression;
 
@@ -95,11 +95,11 @@ public class ConditionNode extends CFGNode {
 	}
 
 	@Override
-	public void index(VariableManagement vm) {
+	public void index(VariableManager vm) {
 		Index.index(condition, vm);
 	
 	//	VariableManagement thenVM = vm.clone();
-		VariableManagement elseVM = vm.clone();
+		VariableManager elseVM = vm.clone();
 		
 		CFGNode thenNode = this.next;
 		
