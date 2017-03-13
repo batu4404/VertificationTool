@@ -34,4 +34,10 @@ public class SyncNode extends CFGNode {
 	public String getConstraint() {
 		return leftHand + " = " + rightHand;
 	}
+	
+	@Override
+	public String getPrefixConstraint() {
+		return String.format("(= %s %s)", leftHand, rightHand);
+	}
+
 }

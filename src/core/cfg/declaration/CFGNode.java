@@ -21,8 +21,12 @@ public abstract class CFGNode {
 	}
 	
 	public String getConstraint() {
-		return "n/a";
+		return "";
 	}
 	
 	public void index(VariableManager vm) {};
+	
+	public String getPrefixConstraint() {
+		return null;
+	}
 }

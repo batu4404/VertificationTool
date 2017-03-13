@@ -26,4 +26,36 @@ public class SpoonHelper {
 			return null;
 		}
 	}
+	
+	public static String getStringBinaryOperationKind(BinaryOperatorKind operator) {
+		String opStr = "";
+		if(operator == BinaryOperatorKind.PLUS)
+			opStr = "+";
+		else if(operator == BinaryOperatorKind.MINUS)
+			opStr = "-";
+		else if(operator == BinaryOperatorKind.DIV)
+			opStr = "/";
+		else if(operator == BinaryOperatorKind.MUL)
+			opStr = "*";
+		else if(operator == BinaryOperatorKind.LT)
+			opStr = "<";
+		else if(operator == BinaryOperatorKind.LE)
+			opStr = "<=";
+		else if(operator == BinaryOperatorKind.GT)
+			opStr = ">";
+		else if(operator == BinaryOperatorKind.GE)
+			opStr = ">=";
+		else if(operator == BinaryOperatorKind.EQ)
+			opStr = "=";
+		else if(operator == BinaryOperatorKind.AND)
+			opStr = "and";
+		else if(operator == BinaryOperatorKind.OR)
+			opStr = "or";
+		else if(operator == BinaryOperatorKind.NE)
+			opStr = "distinct";
+		else 
+			System.out.println("operator: " + operator);
+		
+		return opStr;
+	}
 }

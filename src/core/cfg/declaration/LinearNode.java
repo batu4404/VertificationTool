@@ -1,5 +1,6 @@
 package core.cfg.declaration;
 
+import core.utils.Converttion;
 import core.utils.Index;
 import core.utils.SpoonHelper;
 import core.utils.VariableManager;
@@ -91,5 +92,10 @@ public class LinearNode extends CFGNode {
 						.setAssigned(assigned)
 						.setAssignment(assignment);			
 		}
+	}
+	
+	@Override
+	public String getPrefixConstraint() {
+		return Converttion.prefix(statement);
 	}
 }

@@ -2,6 +2,7 @@ package core.utils;
 
 import java.util.List;
 
+import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtExpression;
@@ -31,6 +32,7 @@ public class Index {
 			indexLocalVariable((CtLocalVariable) element, vm);
 		}
 		else if (element instanceof CtVariableAccess) {
+//			System.out.println("hello: " + element);
 			CtVariableAccess vac = (CtVariableAccess) element;
 			CtVariableReference ctVar = vac.getVariable();
 			Variable var = vm.getVariableByName(ctVar.getSimpleName());
@@ -70,7 +72,14 @@ public class Index {
 	private static void indexLocalVariable(CtLocalVariable localVar, VariableManager vm) {
 		CtExpression assignment = localVar.getAssignment();
 		index(assignment, vm);
+		System.out.println("name: " + localVar.getSimpleName());
 		Variable var = vm.getVariableByName(localVar.getSimpleName());
+		
+		if (var == null) {
+			System.out.println("var is null");
+			return;
+		}
+		
 		var.increase();
 		localVar.setSimpleName(var.getVariableWithIndex());
 	}

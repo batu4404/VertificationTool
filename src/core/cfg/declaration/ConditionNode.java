@@ -1,5 +1,6 @@
 package core.cfg.declaration;
 
+import core.utils.Converttion;
 import core.utils.Index;
 import core.utils.Variable;
 import core.utils.VariableManager;
@@ -116,6 +117,9 @@ public class ConditionNode extends CFGNode {
 		if (nextNode == null)
 			return;
 		
+	//	System.out.println("else node:");
+	//	print(elseNode);
+	//	System.out.println("end else node:");
 		while(nextNode != end) {
 			nextNode.index(elseVM);
 			nextNode = nextNode.getNext();
@@ -174,5 +178,15 @@ public class ConditionNode extends CFGNode {
 		
 		System.out.println(node.getConstraint());
 		print(node.getNext());
+	}
+	
+	@Override
+	public String getPrefixConstraint() {
+		String conditionStr = Converttion.prefix(condition);
+		
+//		String thenConstraint = Converttion.prefix(next, end);
+//		String elseConstraint = Converttion.prefix(elseNode, end);
+//		
+		return conditionStr;
 	}
 }

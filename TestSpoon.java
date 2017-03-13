@@ -42,11 +42,29 @@ public class TestSpoon
 //		}
 		
 		int x = 0;
-		for (int i = 0; i < n; i++) {
-			x = x + i;
+		/*
+		if (x == 0) {
+			x = 0;
+			n = x - x;
 		}
 		
-		return 1;
+		if (x == 0) {
+			x = 0;
+			n = x - x;
+		}
+		
+		for (int i = 0; i < n; ++i) {
+			x = x + i;
+		}
+		*/
+		
+		while (x < 0) {
+			x++;
+		}
+		
+		n = n + 1;
+		
+		return n;
 	}
 /*	
 	public static int testFor1() {
