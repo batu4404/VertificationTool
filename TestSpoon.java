@@ -42,12 +42,17 @@ public class TestSpoon
 //		}
 		
 		int x = 0;
-		/*
+		x++;
+		x = x + n;
+		x = x - n;
+		
 		if (x == 0) {
 			x = 0;
 			n = x - x;
+			n = n + 1 - x;
 		}
 		
+		/*
 		if (x == 0) {
 			x = 0;
 			n = x - x;
@@ -56,13 +61,18 @@ public class TestSpoon
 		for (int i = 0; i < n; ++i) {
 			x = x + i;
 		}
-		*/
+		
 		
 		while (x < 0) {
 			x++;
 		}
 		
+		do {
+			x++;
+		} while (x < 0);
+		
 		n = n + 1;
+		*/
 		
 		return n;
 	}

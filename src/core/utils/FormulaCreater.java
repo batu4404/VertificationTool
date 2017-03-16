@@ -12,26 +12,42 @@ import spoon.reflect.code.CtVariableAccess;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtVariableReference;
 
-public class Converttion {
+public class FormulaCreater {
 	
-	public static String prefix(CFGNode begin, CFGNode end) {
+	public static String LOGIC_AND = "and";
+	public static String LOGIC_OR = "or";
+	public static String NEGATIVE = "not";
+	public static String BINARY_CONNECTIVE = "=>";
+	public static String EQUALITY = "=";
+	
+	public static String createFormula(CFGNode begin, CFGNode end) {
+		
+		if (begin == null) {
+			return null;
+		}
 		
 		String constraint = "";
 		String temp;
 		constraint = begin.getPrefixConstraint();
 		begin = begin.getNext();
-//		if (begin == null) {
-//			return
-//		}
-		while(begin == null || begin != end) {
+		
+		CFGNode node = begin;
+
+		while(node != null && node != end) {
+			System.out.println("constraint: " + constraint);
 			temp = begin.getPrefixConstraint();
-			constraint = wrapInfix(constraint, "&", temp);
+		//	constraint = wrapInfix(LOGIC_AND, constraint, temp);
+			constraint = wrapInfix(LOGIC_AND, temp, constraint);
+			node = node.getNext();
 		}
 		
-		return constraint;
+		if (constraint.equals("")) 
+			return null;
+		else			
+			return constraint;
 	}
 	
-	public static String prefix(CtElement element) {
+	public static String createFormula(CtElement element) {
 		
 		if (element instanceof CtBinaryOperator) {
 			return prefixBinaryOperator((CtBinaryOperator) element);
@@ -64,11 +80,11 @@ public class Converttion {
 		CtExpression right = binOp.getRightHandOperand();
 		BinaryOperatorKind operator = binOp.getKind();
 		
-		String leftStr = prefix(left);
-		String rightStr = prefix(right);
+		String leftStr = createFormula(left);
+		String rightStr = createFormula(right);
 		String operatorStr = SpoonHelper.getStringBinaryOperationKind(operator);
 		
-		return wrapPrefix(leftStr, rightStr, operatorStr);
+		return wrapPrefix(operatorStr, leftStr, rightStr);
 	}
 	
 	private static String prefixAssignment(CtAssignment ass) {
@@ -76,21 +92,25 @@ public class Converttion {
 		CtExpression assignment = ass.getAssignment();	
 		
 		String assignedStr = ass.getAssigned().toString();
-		String assignmentStr = prefix(assignment);
+		String assignmentStr = createFormula(assignment);
 		
-		return wrapPrefix(assignedStr, assignmentStr, "=");
+		return wrapPrefix(EQUALITY, assignedStr, assignmentStr);
 	}
 	
 	private static String prefixLocalVariable(CtLocalVariable localVar) {
 		return localVar.toString();
 	}
 	
-	public static String wrapPrefix(String left, String right, String operand) {
+	public static String wrapPrefix(String operand, String left, String right) {
 		return "(" + operand + " " + left + " " + right + ")";
 	}
 	
 	public static String wrapInfix(String left, String right, String operand) {
 		return "(" + left + " " + operand + " " + right + ")";
+	}
+
+	public static String createFormula(String operator, String operand) {
+		return "(" + operator + " " + operand + ")";
 	}
 
 }

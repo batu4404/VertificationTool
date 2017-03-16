@@ -1,6 +1,6 @@
 package core.cfg.declaration;
 
-import core.utils.Converttion;
+import core.utils.FormulaCreater;
 import core.utils.Index;
 import core.utils.Variable;
 import core.utils.VariableManager;
@@ -20,6 +20,9 @@ public class ConditionNode extends CFGNode {
 	private CtExpression condition;	// biểu thức điều kiện
 	private CFGNode endOfThenBranch;
 	private CFGNode endOfElseBranch;
+	
+	private VariableManager thenVM;
+	private VariableManager elseVM;
 
 	public ConditionNode(CtExpression condition) {
 		CtExpression clone = condition.clone();
@@ -98,9 +101,9 @@ public class ConditionNode extends CFGNode {
 	@Override
 	public void index(VariableManager vm) {
 		Index.index(condition, vm);
-	
-	//	VariableManagement thenVM = vm.clone();
-		VariableManager elseVM = vm.clone();
+		
+		thenVM = vm;
+		elseVM = vm.clone();
 		
 		CFGNode thenNode = this.next;
 		
@@ -117,31 +120,80 @@ public class ConditionNode extends CFGNode {
 		if (nextNode == null)
 			return;
 		
-	//	System.out.println("else node:");
-	//	print(elseNode);
-	//	System.out.println("end else node:");
 		while(nextNode != end) {
 			nextNode.index(elseVM);
 			nextNode = nextNode.getNext();
 		}
 		
-		int size = vm.size();
+		syncIndex();
+	}
+	
+	void print(CFGNode node) {
+		if (node == null)
+			return;
+		
+		System.out.println(node.getConstraint());
+		print(node.getNext());
+	}
+	
+	@Override
+	public String getPrefixConstraint() {
+		String conditionStr = FormulaCreater.createFormula(condition);
+		
+//		String thenConstraint = Converttion.prefix(next, end);
+//		String elseConstraint = Converttion.prefix(elseNode, end);
+//		
+		return conditionStr;
+	}
+	
+	@Override
+	public String getFormula() {
+		String conditionStr = FormulaCreater.createFormula(condition);
+		String notConditionStr = FormulaCreater.createFormula(FormulaCreater.NEGATIVE, conditionStr);
+//		System.out.println("next: " + next);
+//		System.out.println("end: " + endOfThenBranch);
+		
+		String thenFormula = FormulaCreater.createFormula(next, end);
+		String elseFormula = FormulaCreater.createFormula(elseNode, end);
+		
+		String formula = "";
+		
+		if (thenFormula == null && elseFormula == null) {
+			return null;
+		}	
+		else if (thenFormula == null) {
+			formula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, conditionStr, elseFormula);
+		}
+		else if (elseFormula == null) {
+			formula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, conditionStr, thenFormula);
+		}
+		else {
+			thenFormula = FormulaCreater.wrapPrefix(conditionStr, FormulaCreater.BINARY_CONNECTIVE, thenFormula);
+			elseFormula = FormulaCreater.wrapPrefix(notConditionStr, FormulaCreater.BINARY_CONNECTIVE, elseFormula);
+			
+			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, thenFormula, elseFormula);
+		}
+		
+		return formula;
+	}
+	
+	private void syncIndex() {
+		int size = thenVM.size();
 		Variable thenVar;
 		Variable elseVar;
 		// hai vế của biểu thức đồng bộ (leftHand = rightHand)
 		String leftHand;
 		String rightHand;
-//		PairNode thenSync = new PairNode();
-//		PairNode elseSync = new PairNode();
+
 		CFGNode thenSyncTemp = new CFGNode() {};
 		CFGNode elseSyncTemp = new CFGNode() {};
 		CFGNode lastThenSync = thenSyncTemp;
 		CFGNode lastElseSync = elseSyncTemp;
 		SyncNode syncNode;
 		for (int i = 0; i < size; i++) {
-			thenVar = vm.getVariable(i);
+			thenVar = thenVM.getVariable(i);
 			elseVar = elseVM.getVariable(i);
-		//	System.out.println(thenVar.getVariableWithIndex() + ", " + elseVar.getVariableWithIndex());
+		
 			if (thenVar.getIndex() < elseVar.getIndex()) {
 				leftHand = elseVar.getVariableWithIndex();
 				rightHand = thenVar.getVariableWithIndex();
@@ -155,12 +207,9 @@ public class ConditionNode extends CFGNode {
 				syncNode = new SyncNode(leftHand, rightHand);
 				lastElseSync.setNext(syncNode);
 				lastElseSync = syncNode;
-//				System.out.println("else sync: " + syncNode.getConstraint());
 			}
 		}
 		
-//		System.out.println("then: " + lastThenSync);
-//		System.out.println("else: " + lastElseSync);
 		
 		elseNode = elseSyncTemp.getNext();
 		lastElseSync.setNext(end);
@@ -171,22 +220,5 @@ public class ConditionNode extends CFGNode {
 			lastThenSync.setNext(end);
 		}
 	}
-	
-	void print(CFGNode node) {
-		if (node == null)
-			return;
-		
-		System.out.println(node.getConstraint());
-		print(node.getNext());
-	}
-	
-	@Override
-	public String getPrefixConstraint() {
-		String conditionStr = Converttion.prefix(condition);
-		
-//		String thenConstraint = Converttion.prefix(next, end);
-//		String elseConstraint = Converttion.prefix(elseNode, end);
-//		
-		return conditionStr;
-	}
+
 }

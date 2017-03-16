@@ -60,8 +60,9 @@ public class Index {
 		
 		CtVariableAccess assigned = (CtVariableAccess) ass.getAssigned();
 		Variable var = vm.getVariableByName(assigned.getVariable().getSimpleName());
+		
 		if (var == null) {
-			System.out.println("var (assigned) is null: " + var);
+//			System.out.println("var (assigned) is null: " + var);
 			return;
 		}
 		var.increase();
@@ -72,7 +73,7 @@ public class Index {
 	private static void indexLocalVariable(CtLocalVariable localVar, VariableManager vm) {
 		CtExpression assignment = localVar.getAssignment();
 		index(assignment, vm);
-		System.out.println("name: " + localVar.getSimpleName());
+//		System.out.println("name: " + localVar.getSimpleName());
 		Variable var = vm.getVariableByName(localVar.getSimpleName());
 		
 		if (var == null) {

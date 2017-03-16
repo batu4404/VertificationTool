@@ -23,8 +23,17 @@ public class Test {
 
 		CtMethod method = methodList.get(0);
 		
+		int nLoops = 1;
+		
 		CFGBuilder builder = new CFGBuilder();
-		VtCFG cfg = builder.setNumberOfLoop(5).buildCFG(method);
+		VtCFG cfg = builder.setNumberOfLoop(nLoops).buildCFG(method);
 		cfg.printPrefix();
+		
+		cfg.index();
+		cfg.printPrefix();
+		
+		System.out.println("fomula");
+	//	cfg.getFormula();
+		cfg.printFormula();
 	}
 }

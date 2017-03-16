@@ -29,4 +29,8 @@ public abstract class CFGNode {
 	public String getPrefixConstraint() {
 		return null;
 	}
+	
+	public String getFormula() {
+		return null;
+	}
 }

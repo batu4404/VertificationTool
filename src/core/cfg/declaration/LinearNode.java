@@ -1,6 +1,6 @@
 package core.cfg.declaration;
 
-import core.utils.Converttion;
+import core.utils.FormulaCreater;
 import core.utils.Index;
 import core.utils.SpoonHelper;
 import core.utils.VariableManager;
@@ -9,13 +9,16 @@ import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtLiteral;
+import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtUnaryOperator;
 import spoon.reflect.code.CtVariableAccess;
+import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.code.UnaryOperatorKind;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.factory.CoreFactory;
 import spoon.reflect.factory.Factory;
+import spoon.reflect.reference.CtLocalVariableReference;
 import spoon.reflect.reference.CtVariableReference;
 
 /**
@@ -69,6 +72,8 @@ public class LinearNode extends CFGNode {
 	
 	// chuẩn hóa biểu thức
 	private void properStatement() {
+		CoreFactory coreFactory = statement.getFactory().Core();
+		
 		if (statement instanceof CtUnaryOperator) {
 			CtUnaryOperator unaryOp = (CtUnaryOperator) statement;
 			CtVariableAccess operand = (CtVariableAccess) unaryOp.getOperand();
@@ -77,7 +82,7 @@ public class LinearNode extends CFGNode {
 
 			CtVariableReference var = (CtVariableReference) operand.getVariable();
 			
-			CoreFactory coreFactory = statement.getFactory().Core();
+			
 			
 			CtLiteral rightHand = coreFactory.createLiteral().setValue(1);
 		
@@ -92,10 +97,33 @@ public class LinearNode extends CFGNode {
 						.setAssigned(assigned)
 						.setAssignment(assignment);			
 		}
+		else if (statement instanceof CtLocalVariable) {
+			CtLocalVariable lc = (CtLocalVariable) statement;
+			CtExpression assignment = lc.getAssignment();
+			
+			if (assignment == null)
+				return;
+			
+			CtVariableReference variableReference = lc.getReference();
+			
+			CtVariableWrite variableWrite = coreFactory.createVariableWrite()
+													.setVariable(variableReference);
+			
+			statement = (CtAssignment) coreFactory.createAssignment()
+										.setAssigned(variableWrite)
+										.setAssignment(assignment);
+			
+		}
 	}
 	
 	@Override
 	public String getPrefixConstraint() {
-		return Converttion.prefix(statement);
+		return FormulaCreater.createFormula(statement);
 	}
+	
+	@Override
+	public String getFormula() {
+		return FormulaCreater.createFormula(statement);
+	}
+	
 }

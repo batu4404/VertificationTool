@@ -1,6 +1,6 @@
 package core.cfg.declaration;
 
-import core.utils.Converttion;
+import core.utils.FormulaCreater;
 import core.utils.Index;
 import core.utils.VariableManager;
 import spoon.reflect.code.CtExpression;
@@ -37,7 +37,7 @@ public class ReturnNode extends CFGNode {
 	
 	@Override
 	public String getPrefixConstraint() {
-		String returnedExpressionPrefix = Converttion.prefix(returnedExpression);
-		return Converttion.wrapPrefix(RETURN_TAG, returnedExpressionPrefix, "=");
+		String returnedExpressionPrefix = FormulaCreater.createFormula(returnedExpression);
+		return FormulaCreater.wrapPrefix(RETURN_TAG, returnedExpressionPrefix, "=");
 	}
 }
