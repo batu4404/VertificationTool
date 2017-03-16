@@ -1,0 +1,23 @@
+; this is a comment in SMTLIB2
+; declaration
+(declare-const a Int)
+(declare-const b Int)
+;(declare-fun a () Int)
+;(declare-fun b () Int)
+(declare-const c Real)
+(declare-const d Real)
+
+;(assert (= c 5.5))
+;(assert (= d 2.2))
+;(assert (= (div c d) 2))
+
+(assert (>= a 0))
+(assert (<= a 0))
+(assert (= b (- a 1)))
+(assert (= b -1))
+(assert (= a 0))
+
+
+
+(check-sat)
+(get-model)

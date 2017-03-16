@@ -34,7 +34,6 @@ public class FormulaCreater {
 		CFGNode node = begin;
 
 		while(node != null && node != end) {
-			System.out.println("constraint: " + constraint);
 			temp = begin.getPrefixConstraint();
 		//	constraint = wrapInfix(LOGIC_AND, constraint, temp);
 			constraint = wrapInfix(LOGIC_AND, temp, constraint);
