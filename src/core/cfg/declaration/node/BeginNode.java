@@ -1,4 +1,4 @@
-package core.cfg.declaration;
+package core.cfg.declaration.node;
 
 /**
  * Node bắt đầu của câu lệnh, vòng lặp, hàm

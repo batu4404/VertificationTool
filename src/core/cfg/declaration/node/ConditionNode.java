@@ -1,7 +1,8 @@
-package core.cfg.declaration;
+package core.cfg.declaration.node;
 
 import core.utils.FormulaCreater;
 import core.utils.Index;
+import core.utils.Printer;
 import core.utils.Variable;
 import core.utils.VariableManager;
 import spoon.reflect.code.CtAssignment;
@@ -100,6 +101,7 @@ public class ConditionNode extends CFGNode {
 
 	@Override
 	public void index(VariableManager vm) {
+	
 		Index.index(condition, vm);
 		
 		thenVM = vm;
@@ -117,15 +119,22 @@ public class ConditionNode extends CFGNode {
 		}
 		
 		nextNode = elseNode;
-		if (nextNode == null)
+		if (nextNode == null) {
 			return;
+		}
 		
 		while(nextNode != end) {
 			nextNode.index(elseVM);
 			nextNode = nextNode.getNext();
 		}
 		
+		System.out.println("before sync");
+		Printer.printCFG(this, end, "");
+		
 		syncIndex();
+		
+		System.out.println("after sync");
+		Printer.printCFG(this, end, "");
 	}
 	
 	void print(CFGNode node) {
@@ -168,8 +177,8 @@ public class ConditionNode extends CFGNode {
 			formula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, conditionStr, thenFormula);
 		}
 		else {
-			thenFormula = FormulaCreater.wrapPrefix(conditionStr, FormulaCreater.BINARY_CONNECTIVE, thenFormula);
-			elseFormula = FormulaCreater.wrapPrefix(notConditionStr, FormulaCreater.BINARY_CONNECTIVE, elseFormula);
+			thenFormula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, conditionStr, thenFormula);
+			elseFormula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, notConditionStr, elseFormula);
 			
 			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, thenFormula, elseFormula);
 		}
@@ -185,8 +194,8 @@ public class ConditionNode extends CFGNode {
 		String leftHand;
 		String rightHand;
 
-		CFGNode thenSyncTemp = new CFGNode() {};
-		CFGNode elseSyncTemp = new CFGNode() {};
+		CFGNode thenSyncTemp = new EmptyNode();
+		CFGNode elseSyncTemp = new EmptyNode();
 		CFGNode lastThenSync = thenSyncTemp;
 		CFGNode lastElseSync = elseSyncTemp;
 		SyncNode syncNode;
@@ -211,11 +220,18 @@ public class ConditionNode extends CFGNode {
 		}
 		
 		
-		elseNode = elseSyncTemp.getNext();
-		lastElseSync.setNext(end);
+//		elseNode = elseSyncTemp.getNext();
+//		lastElseSync.setNext(end);
 		
 		if (thenSyncTemp.getNext() != null) {
-			endOfElseBranch.setNext(thenSyncTemp.getNext());
+			endOfThenBranch.setNext(thenSyncTemp.getNext());
+			endOfThenBranch = lastThenSync;
+			lastThenSync.setNext(end);
+		}
+		
+		if (elseSyncTemp.getNext() != null) {
+			System.out.println("jre");
+			endOfElseBranch.setNext(elseSyncTemp.getNext());
 			endOfElseBranch = lastElseSync;
 			lastThenSync.setNext(end);
 		}

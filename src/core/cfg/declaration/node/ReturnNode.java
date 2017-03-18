@@ -1,4 +1,4 @@
-package core.cfg.declaration;
+package core.cfg.declaration.node;
 
 import core.utils.FormulaCreater;
 import core.utils.Index;
@@ -17,7 +17,7 @@ public class ReturnNode extends CFGNode {
 	
 	public ReturnNode(CtReturn ctReturn) {
 		returnedExpression = ctReturn.getReturnedExpression();
-		System.out.println("returnedExpression: " + returnedExpression.getClass());
+//		System.out.println("returnedExpression: " + returnedExpression.getClass());
 	}
 	
 	public CtExpression getExpression() {
@@ -25,7 +25,6 @@ public class ReturnNode extends CFGNode {
 	}
 	
 	public void index(VariableManager vm) {
-		System.out.println("index now");
 		Index.index(returnedExpression, vm);
 	}
 	
@@ -38,6 +37,12 @@ public class ReturnNode extends CFGNode {
 	@Override
 	public String getPrefixConstraint() {
 		String returnedExpressionPrefix = FormulaCreater.createFormula(returnedExpression);
-		return FormulaCreater.wrapPrefix(RETURN_TAG, returnedExpressionPrefix, "=");
+		return FormulaCreater.wrapPrefix(FormulaCreater.EQUALITY, RETURN_TAG, returnedExpressionPrefix);
+	}
+	
+	@Override
+	public String getFormula() {
+		String returnedExpressionPrefix = FormulaCreater.createFormula(returnedExpression);
+		return FormulaCreater.wrapPrefix(FormulaCreater.EQUALITY, RETURN_TAG, returnedExpressionPrefix);
 	}
 }

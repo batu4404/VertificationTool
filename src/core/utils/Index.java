@@ -21,7 +21,7 @@ import spoon.reflect.reference.CtVariableReference;
 public class Index {
 	
 	public static void index(CtElement element, VariableManager vm) {
-		
+
 		if (element instanceof CtBinaryOperator) {
 			indexBinaryOperator((CtBinaryOperator) element, vm);
 		}

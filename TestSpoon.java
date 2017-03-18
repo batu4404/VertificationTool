@@ -3,7 +3,7 @@ public class TestSpoon
 {
 
 
-	public static int testThoi(int n) {
+	public static int testThoi(int a, int b, int n) {
 		/*int x = 1;
 		int sum = 0;
 		x = 2;
@@ -41,15 +41,18 @@ public class TestSpoon
 //			break;
 //		}
 		
-		int x = 0;
-		x++;
-		x = x + n;
-		x = x - n;
+		int c;
+		int ret = 0;
+//		if (a > b) {
+//			ret = a;
+//			a = b;
+//		}
+//		else {
+//			ret = b;
+//		}
 		
-		if (x == 0) {
-			x = 0;
-			n = x - x;
-			n = n + 1 - x;
+		for (int i = 0; i <= n; i++) { 
+			ret = ret + i;
 		}
 		
 		/*
@@ -166,7 +169,7 @@ public class TestSpoon
 	}
 */
 	
-	
+/*	
 	public static void switch1() {
 		int n = 0;
 		switch(n) {
@@ -183,7 +186,7 @@ public class TestSpoon
 			break;
 		}
 	}
-
+*/
 
 	
 /*

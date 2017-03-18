@@ -1,12 +1,12 @@
 package core.utils;
 
-import core.cfg.declaration.BeginIf;
-import core.cfg.declaration.CFGNode;
-import core.cfg.declaration.ConditionNode;
-import core.cfg.declaration.EndNode;
-import core.cfg.declaration.LinearNode;
-import core.cfg.declaration.PairNode;
-import core.cfg.declaration.SyncNode;
+import core.cfg.declaration.node.BeginIf;
+import core.cfg.declaration.node.CFGNode;
+import core.cfg.declaration.node.ConditionNode;
+import core.cfg.declaration.node.EndNode;
+import core.cfg.declaration.node.LinearNode;
+import core.cfg.declaration.node.PairNode;
+import core.cfg.declaration.node.SyncNode;
 
 public class Printer {
 	

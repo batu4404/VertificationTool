@@ -1,6 +1,6 @@
 package core.utils;
 
-import core.cfg.declaration.CFGNode;
+import core.cfg.declaration.node.CFGNode;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtBinaryOperator;
@@ -26,7 +26,8 @@ public class FormulaCreater {
 			return null;
 		}
 		
-		String constraint = "";
+		
+		String constraint;
 		String temp;
 		constraint = begin.getPrefixConstraint();
 		begin = begin.getNext();
@@ -34,16 +35,21 @@ public class FormulaCreater {
 		CFGNode node = begin;
 
 		while(node != null && node != end) {
-			temp = begin.getPrefixConstraint();
-		//	constraint = wrapInfix(LOGIC_AND, constraint, temp);
-			constraint = wrapInfix(LOGIC_AND, temp, constraint);
+			temp = node.getFormula();
+	
+			if (temp != null) {
+				if (constraint == null) {
+					constraint = temp;
+				}
+				else {
+//					constraint = wrapInfix(LOGIC_AND, constraint, temp);
+					constraint = wrapInfix(LOGIC_AND, temp, constraint);
+				}
+			}
 			node = node.getNext();
 		}
-		
-		if (constraint.equals("")) 
-			return null;
-		else			
-			return constraint;
+			
+		return constraint;
 	}
 	
 	public static String createFormula(CtElement element) {

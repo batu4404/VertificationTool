@@ -4,19 +4,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.cfg.declaration.BeginFor;
-import core.cfg.declaration.BeginIf;
-import core.cfg.declaration.BeginNode;
-import core.cfg.declaration.CFGNode;
-import core.cfg.declaration.ConditionNode;
-import core.cfg.declaration.EmptyNode;
-import core.cfg.declaration.EndCondition;
-import core.cfg.declaration.EndNode;
-import core.cfg.declaration.LinearNode;
-import core.cfg.declaration.PairNode;
-import core.cfg.declaration.ReturnNode;
-import core.cfg.declaration.SyncNode;
 import core.cfg.declaration.VtCFG;
+import core.cfg.declaration.node.BeginIf;
+import core.cfg.declaration.node.BeginNode;
+import core.cfg.declaration.node.CFGNode;
+import core.cfg.declaration.node.ConditionNode;
+import core.cfg.declaration.node.EmptyNode;
+import core.cfg.declaration.node.EndCondition;
+import core.cfg.declaration.node.EndNode;
+import core.cfg.declaration.node.LinearNode;
+import core.cfg.declaration.node.PairNode;
+import core.cfg.declaration.node.ReturnNode;
+import core.cfg.declaration.node.SyncNode;
 import core.utils.LauncherSpoon;
 import core.utils.Printer;
 import core.utils.Variable;
@@ -43,12 +42,15 @@ import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.reference.CtLocalVariableReference;
+import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.reference.CtVariableReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.reflect.code.CtBlockImpl;
 
 public class CFGBuilder {
 	CtMethod method;
+	
+	List<String> parameters; 
 	
 	private int nLoops = 1;
 	
@@ -84,6 +86,16 @@ public class CFGBuilder {
 		VariableManager vm = buildVariableManager();
 		cfg.setVariableManager(vm);
 		
+		
+		CtTypeReference returnType = method.getType();
+		cfg.setReturnType(returnType.toString());
+		
+		if (!returnType.toString().equals("void")) {
+			parameters.add("return");
+		}
+		
+		cfg.setParameters(parameters);
+		
 		return cfg;
 	}
 	
@@ -95,8 +107,7 @@ public class CFGBuilder {
 	 */
 	public PairNode generateCFG(CtStatement statement) {
 		PairNode pairNode = null;
-		if (statement != null)
-			System.out.println("statement: " + statement + ", class: " + statement.getClass());
+		
 		if (statement == null) {
 			EmptyNode empty = new EmptyNode();
 			pairNode = new PairNode(empty, empty);
@@ -149,6 +160,7 @@ public class CFGBuilder {
 		PairNode init = generateCFG(forInit);
 		
 		CFGNode lastNode = end;
+		EmptyNode emptyNode;
 		for (int i = 0; i < nLoops; i++) {
 			
 			ConditionNode condition = new ConditionNode(conditionExp);
@@ -163,7 +175,11 @@ public class CFGBuilder {
 			update.getEnd().setNext(lastNode);
 			condition.setEndOfThenBranch(lastNode);
 			
-			condition.setElseNode(end);
+			emptyNode = new EmptyNode();
+			condition.setElseNode(emptyNode);
+			condition.setEndOfElseBranch(emptyNode);
+			emptyNode.setNext(end);
+			
 			condition.setEnd(end);
 			
 			lastNode = condition;
@@ -263,10 +279,12 @@ public class CFGBuilder {
 		PairNode elseCFG = generateCFG(elseStatement);
 		PairNode thenCFG = generateCFG(thenStatement);
 		
-		conditionNode.setThenNode(thenCFG.getBegin());
+//		conditionNode.setThenNode(thenCFG.getBegin());
+		conditionNode.setThen(thenCFG);
 		thenCFG.getEnd().setNext(end);
 		
-		conditionNode.setElseNode(elseCFG.getBegin());
+//		conditionNode.setElseNode(elseCFG.getBegin());
+		conditionNode.setElse(elseCFG);
 		elseCFG.getEnd().setNext(end);
 		
 		conditionNode.setEnd(end);
@@ -303,7 +321,7 @@ public class CFGBuilder {
 				// khoi cuoi cung la khoi default
 				c.getStatements().remove(c.getStatements().size()-1);
 				PairNode element = generateCFG(c.getStatements());
-				System.out.println("size: " + c.getStatements());
+//				System.out.println("size: " + c.getStatements());
 				element.setEnd(nestedNode);
 				nestedNode = element.getBegin();
 			}
@@ -319,7 +337,7 @@ public class CFGBuilder {
 				c.getStatements().remove(c.getStatements().size()-1);
 				PairNode element = generateCFG(c.getStatements());
 				element.setEnd(end);
-				System.out.println("size: " + c.getStatements());
+//				System.out.println("size: " + c.getStatements());
 				condition.setThenNode(element.getBegin());
 				condition.setElseNode(nestedNode);
 				nestedNode = condition;
@@ -384,13 +402,18 @@ public class CFGBuilder {
 		VariableManager vm = new VariableManager();
 		List<CtParameter> params = method.getParameters();
 		
+		parameters = new ArrayList<String>();
+		
 		String name;
 		String type;
 		Variable var;
+		int i = 0;
 		for (CtParameter param: params) {
 			var = new Variable(param.getType().toString(), param.getSimpleName());
 			var.setIndex(0); // chỉ số của tham biến khi bắt đầu method là 0
 			vm.addVariable(var);
+			
+			parameters.add(param.getSimpleName());
 		}
 		
 		List<CtElement> listEle = method.getElements(new TypeFilter(CtLocalVariable.class));

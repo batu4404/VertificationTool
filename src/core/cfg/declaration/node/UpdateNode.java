@@ -1,4 +1,4 @@
-package core.cfg.declaration;
+package core.cfg.declaration.node;
 
 import spoon.reflect.code.CtStatement;
 

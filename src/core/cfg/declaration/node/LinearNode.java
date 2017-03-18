@@ -1,4 +1,4 @@
-package core.cfg.declaration;
+package core.cfg.declaration.node;
 
 import core.utils.FormulaCreater;
 import core.utils.Index;
@@ -82,8 +82,6 @@ public class LinearNode extends CFGNode {
 
 			CtVariableReference var = (CtVariableReference) operand.getVariable();
 			
-			
-			
 			CtLiteral rightHand = coreFactory.createLiteral().setValue(1);
 		
 			CtExpression assigned = coreFactory.createVariableWrite().setVariable(var.clone());
@@ -101,8 +99,11 @@ public class LinearNode extends CFGNode {
 			CtLocalVariable lc = (CtLocalVariable) statement;
 			CtExpression assignment = lc.getAssignment();
 			
-			if (assignment == null)
+			
+			if (assignment == null) {
+				statement = null;
 				return;
+			}
 			
 			CtVariableReference variableReference = lc.getReference();
 			

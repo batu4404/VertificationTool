@@ -1,4 +1,4 @@
-package core.cfg.declaration;
+package core.cfg.declaration.node;
 
 /**
  * @author lenovo
@@ -37,6 +37,11 @@ public class SyncNode extends CFGNode {
 	
 	@Override
 	public String getPrefixConstraint() {
+		return String.format("(= %s %s)", leftHand, rightHand);
+	}
+
+	@Override
+	public String getFormula() {
 		return String.format("(= %s %s)", leftHand, rightHand);
 	}
 

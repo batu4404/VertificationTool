@@ -66,4 +66,9 @@ public class Variable {
 	public String toString() {
 		return "type: " + type + ", name: " + name + ", index: " + index;
 	}
+
+
+	public boolean hasInitialized() {
+		return index > -1;
+	}
 }
