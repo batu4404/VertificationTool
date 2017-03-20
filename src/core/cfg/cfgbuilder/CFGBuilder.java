@@ -52,7 +52,7 @@ public class CFGBuilder {
 	
 	List<String> parameters; 
 	
-	private int nLoops = 1;
+	private int nLoops = 2;
 	
 	public CFGBuilder(){}
 	
@@ -422,6 +422,12 @@ public class CFGBuilder {
 			lv = (CtLocalVariable) e;
 			var = new Variable(lv.getType().toString(), lv.getSimpleName());
 			vm.addVariable(var);
+		}
+		
+		CtTypeReference returnType = method.getType();
+	
+		if (!returnType.toString().equals("void")) {
+			vm.addVariable(new Variable(returnType.toString(), "return"));
 		}
 		
 		return vm;

@@ -5,6 +5,7 @@ public class InfixToPrefix {
 		String input = "-1+2*4/5-7+3/6";
         input = "a*-a+ (2*3-1)";
         input = "-10 + (x - 100) * (y < x)";
+        input = "n * (n + 1) / 2";
         String output;
         InfixToPostfix theTrans = new InfixToPostfix(input);
         output = theTrans.doTrans(); 
@@ -14,8 +15,10 @@ public class InfixToPrefix {
        
         Helper.reverse(elementMath);
         for (String s: elementMath) {
-        	System.out.println("s: " + s);
+        	System.out.print("  " + s);
         }
+        
+        System.out.println("  ");
         
         String prefix = "";
         

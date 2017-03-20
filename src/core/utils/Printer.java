@@ -1,5 +1,9 @@
 package core.utils;
 
+import java.io.PrintStream;
+
+import javax.print.StreamPrintService;
+
 import core.cfg.declaration.node.BeginIf;
 import core.cfg.declaration.node.CFGNode;
 import core.cfg.declaration.node.ConditionNode;
@@ -115,6 +119,43 @@ public class Printer {
 				System.out.println(nSpaces + constraint);	
 			}
 			printCFGPrefix(node.getNext(), end, nSpaces);
+		}
+	}
+	
+	public static void printCFGPrefix(PrintStream printStream, 
+					CFGNode node, CFGNode end, String nSpaces) {
+		
+		
+		if (node == null || node == end) {
+			return;
+		}	
+		else if (node instanceof LinearNode) {
+		
+			printStream.println(nSpaces + node.getPrefixConstraint());	
+			
+			printCFGPrefix(printStream, node.getNext(), end, nSpaces);	// 4 spaces
+		}
+		else if (node instanceof BeginIf) {
+			BeginIf begin = (BeginIf) node;
+			printCFGPrefix(printStream, begin.getNext(), end, nSpaces);
+			printCFGPrefix(printStream, begin.getEndNode().getNext(), end, nSpaces);
+		}
+		else if (node instanceof ConditionNode) {
+			ConditionNode cn = (ConditionNode) node;
+			printStream.println(nSpaces + "if ( " + cn.getPrefixConstraint() + " ) {");
+			printCFGPrefix(printStream, cn.getThenNode(), cn.getEnd() , nSpaces + "    ");	// 4 spaces
+			printStream.println(nSpaces + "}");
+			printStream.println(nSpaces + "else {");
+			printCFGPrefix(printStream, cn.getElseNode(), cn.getEnd(), nSpaces + "    ");	// 4 spaces
+			printStream.println(nSpaces + "}");
+			printCFGPrefix(printStream, cn.getEnd(), end, nSpaces + "");	// 4 spaces
+		}
+		else {
+			String constraint = node.getPrefixConstraint();
+			if ( constraint != null) {
+				printStream.println(nSpaces + constraint);	
+			}
+			printCFGPrefix(printStream ,node.getNext(), end, nSpaces);
 		}
 	}
 	

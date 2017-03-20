@@ -179,8 +179,11 @@ public class ConditionNode extends CFGNode {
 		else {
 			thenFormula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, conditionStr, thenFormula);
 			elseFormula = FormulaCreater.wrapPrefix(FormulaCreater.BINARY_CONNECTIVE, notConditionStr, elseFormula);
+//			thenFormula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, conditionStr, thenFormula);
+//			elseFormula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, notConditionStr, elseFormula);
 			
 			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, thenFormula, elseFormula);
+			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_OR, thenFormula, elseFormula);
 		}
 		
 		return formula;

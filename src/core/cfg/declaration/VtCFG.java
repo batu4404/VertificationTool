@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.channels.Pipe;
+import java.util.ArrayList;
 import java.util.List;
 
 import core.cfg.cfgbuilder.CFGBuilder;
@@ -121,12 +122,14 @@ public class VtCFG {
 		Printer.printCFGPrefix(begin, end, "");
 	}
 	
-	public void index() {
+	public VtCFG index() {
 		CFGNode next = begin.getNext();
 		while (next != end) {
 			next.index(vm);
 			next = next.getNext();
 		}
+		
+		return this;
 	}
 	
 	public String getFormula() {
@@ -167,11 +170,8 @@ public class VtCFG {
 	}
 	
 	public void printSMTFormual(PrintStream printStream) {
-		CFGNode node = begin.getNext();
-		String f;
 		
 		int lastIndex;
-		
 		// (declare-fun a_0 () Int)
 		for (Variable var: vm.getListVariables()) {
 			lastIndex = var.getIndex();
@@ -186,7 +186,9 @@ public class VtCFG {
 							SMTTypeConvertion.getSMTType(returnType)+ ")");
 		}
 		
-	
+		CFGNode node = begin.getNext();
+		String f;
+		
 		while (node != end) {
 			f = node.getFormula();
 			if (f != null) {
@@ -194,5 +196,26 @@ public class VtCFG {
 			}
 			node = node.getNext();
 		}
+	}
+	
+	public void printMetaSMT(PrintStream printStream) {
+		Printer.printCFGPrefix(printStream, begin, end, "");
+	}
+
+	public List<String> getListFomula() {
+		List<String> listFormula = new ArrayList<>();
+		
+		CFGNode node = begin.getNext();
+		String f;
+		
+		while (node != end) {
+			f = node.getFormula();
+			if (f != null) {
+				listFormula.add(f);
+			}
+			node = node.getNext();
+		}
+		
+		return listFormula;
 	}
 }

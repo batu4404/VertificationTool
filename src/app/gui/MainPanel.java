@@ -490,6 +490,7 @@ public class MainPanel extends JPanel {
 			List<String> solverLog = core.getSolverLog();
 			
 			String state = outputList.get(0);
+			System.out.println("state: " + state);
 			if (state.equals("unsat"))
 				resultTA.setText(SATLOG);
 			else if (state.equals("unknown"))

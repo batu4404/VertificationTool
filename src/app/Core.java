@@ -3,12 +3,16 @@ package app;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import core.cfg.cfgbuilder.CFGBuilder;
 import core.cfg.declaration.VtCFG;
 import core.solver.SMTInput;
+import core.solver.Z3Runner;
+import core.utils.LauncherSpoon;
+import core.utils.Variable;
 import spoon.compiler.ModelBuildingException;
 import spoon.compiler.SpoonCompiler;
 import spoon.compiler.SpoonResource;
@@ -28,8 +32,8 @@ import spoon.support.compiler.jdt.JDTBasedSpoonCompiler;
 public class Core {
 	public Core() {
 		smtInput = new SMTInput();
-		modelBuilder = createCompiler(factory);
 		cfgBuilder = new CFGBuilder();
+		userAssertion = new UserAssertion();
 	}
 	
 	public Core(String pathFile)
@@ -45,58 +49,18 @@ public class Core {
 		return methodSignatures;
 	}
 	
-	
-	public Factory createFactory() {
-		return new FactoryImpl(new DefaultCoreFactory(), new StandardEnvironment());
-	}
-	
-	public SpoonCompiler createCompiler() {
-		return createCompiler(factory);
-	}
-	
-	public SpoonCompiler createCompiler(Factory factory) {
-		SpoonCompiler comp = new JDTBasedSpoonCompiler(factory);
-		return comp;
-	}
-	
-	public void addInputResource(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			System.out.println("file not existed: " + path);
-			System.exit(-1);
-		}
-		if (file.isDirectory()) {
-			addInputResource(new FileSystemFolder(file));
-		} else {
-			addInputResource(new FileSystemFile(file));
-		}
-	}
-	
-	private void addInputResource(SpoonResource resource) {
-		modelBuilder.addInputSource(resource);
-	}
-	
-	private void addInputResource(File resource) {
-		modelBuilder.addInputSource(resource);
-	}
-	
-	public void buildModel() {
-		modelBuilder.build();
-	}
-	
 	private void create() 
 			throws ModelBuildingException, FileNotFoundException {
-		addInputResource(pathFile);
 		
-		buildModel();
+		launcher = new LauncherSpoon();
+		launcher.addInputResource(pathFile);
+		launcher.buildModel();
 		
-		CtModel model = factory.getModel();
-		Filter filter = new TypeFilter(CtMethod.class);
-		System.out.println("nulllll");
-		List<CtMethod> methodList = model.getElements(filter);
+		List<CtMethod> methodList = launcher.getMethods();
 		if (methodList == null) {
 			System.out.println("null");
 		}
+		
 		int nMethods = methodList.size();
 		methodSignatures = new String[nMethods];
 		methodCFGList = new ArrayList<>();
@@ -104,17 +68,27 @@ public class Core {
 		SMTInput smtInput = new SMTInput();
 		for(int i = 0; i < nMethods; i++) {
 			methodSignatures[i] = methodList.get(i).getSignature();
-			methodCFGList.add( cfgBuilder.buildCFG(methodList.get(i)) );
+			methodCFGList.add( cfgBuilder.buildCFG(methodList.get(i)).index() );
 		}
 	}
 	
 	public List<String> runSolver(String methodSignature,List<String> conditions) 
 				throws Exception {
 
-/*
+
 		int index = find(methodSignatures, methodSignature);
 		
 		VtCFG mf = methodCFGList.get(index);
+		
+		// Sinh file meta
+		PrintStream printStream;
+		try {
+			printStream = new PrintStream(new File("metaSMT.txt"));
+			mf.printMetaSMT(printStream);
+			printStream.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		
 		String fileDir = "input.smt";
 	    FileOutputStream fo = new FileOutputStream(fileDir);
@@ -126,12 +100,14 @@ public class Core {
 	    	System.out.println("smtInput is null");
 	    	System.exit(-1);
 	    }
-	    smtInput.setFormula(mf.getFormula());
-		smtInput.setListVariables(mf.getVariables());
+	    
+	    smtInput.setFormula(mf.getListFomula());
+		smtInput.setListVariables(mf.getVariableManager().getListVariables());
 		
 		String constraintTemp;
 		for(int i = 0; i < conditions.size(); i++) {
-			constraintTemp = new InfixToPrefix(mf.getParametersList()).getOutput(conditions.get(i));
+			constraintTemp = userAssertion.setParameter(mf.getParameters())
+								.createUserAssertion(conditions.get(i));
 			constraintTemp = "(not " + constraintTemp + ")";
 			conditions.set(i, constraintTemp);
 		}
@@ -145,7 +121,7 @@ public class Core {
 	    result.forEach(System.out::println);
 	    
 	    List<String> result1 = new ArrayList<String>();
-	    List<Variable> parameters = mf.getParametersList();
+	    List<Variable> parameters = mf.getVariableManager().getListVariables();
 	    result1.add(result.get(0));
 	    for (Variable v: parameters) {
 	    	String varName = v.getName() + "_0"; 
@@ -179,10 +155,8 @@ public class Core {
     			break;
     		}
     	}
-   */
 	    
-//	    return result1;
-	    return null;
+	    return result1;
 	}
 	
 	public List<String> getSolverLog() {
@@ -201,16 +175,15 @@ public class Core {
 		return -1;
 	}
 	
+	LauncherSpoon launcher;
 	CFGBuilder cfgBuilder;
 	
 	private String pathFile;
 	private List<VtCFG> methodCFGList;
 	private SMTInput smtInput;
 	private String[] methodSignatures;
-
-	private Factory factory = createFactory();
-	private SpoonCompiler modelBuilder;
-	private Filter<CtType<?>> typeFilter;
+	
+	private UserAssertion userAssertion;
 	
 	List<String> result;
 }

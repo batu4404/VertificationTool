@@ -25,13 +25,22 @@ public class Test {
 
 		CtMethod method = methodList.get(0);
 		
-		int nLoops = 4;
+		int nLoops = 1;
 		
 		CFGBuilder builder = new CFGBuilder();
 		VtCFG cfg = builder.setNumberOfLoop(nLoops).buildCFG(method);
 		cfg.printPrefix();
 		
 		cfg.index();
+		PrintStream printStream;
+		try {
+			printStream = new PrintStream(new File("metaSMT.txt"));
+			cfg.printMetaSMT(printStream);
+			printStream.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
 		cfg.printPrefix();
 		
 		System.out.println("fomula");

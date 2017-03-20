@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.List;
 
 import core.utils.Variable;
+import core.utils.VariableManager;
 
 public class SMTInput {
 	public SMTInput() {
@@ -35,8 +36,8 @@ public class SMTInput {
 		this.constraints = constraints;
 	}
 	
-	public void setListVariables(List<Variable> listVariables) {
-		this.listVariables = listVariables;
+	public void setListVariables(List<Variable> list) {
+		this.listVariables = list;
 	}
 	
 	public void setFormula(List<String> formula) {
@@ -44,9 +45,11 @@ public class SMTInput {
 	}
 	
 	public void printInput() {
+		System.err.println("print");
 		for (Variable v: listVariables) {
+			String smtType = getSMTType(v.getType());
 			if (v.hasInitialized()) {
-				String smtType = getSMTType(v.getType());
+				
 				System.out.println("v: " + v);
 				if ( v.getIndex() < 0)
 					System.out.println("(declare-fun " + v.getVariableWithIndex() + " () " + smtType + ")");
@@ -54,6 +57,10 @@ public class SMTInput {
 					for (int i = 0; i <= v.getIndex(); i++)
 						System.out.println(declare(v.getName(), i, smtType));
 				}
+			}
+			else if (v.getName().equals("return")) {
+				System.out.println("return return");
+				System.out.println("(declare-fun return () " + smtType + ")");
 			}
 			
 		}
@@ -69,10 +76,11 @@ public class SMTInput {
 	public void printInputToOutputStream(OutputStream os) 
 						throws IOException {
 		Writer out = new BufferedWriter(new OutputStreamWriter(os));
-		
+		String smtType;
 		for (Variable v: listVariables) {
+			smtType = getSMTType(v.getType());
 			if (v.hasInitialized()) {
-				String smtType = getSMTType(v.getType());
+				
 				System.out.println("v: " + v);
 				if ( v.getIndex() < 0)
 					out.append("(declare-fun " + v.getVariableWithIndex() + " () " + smtType + ")\n");
@@ -80,6 +88,9 @@ public class SMTInput {
 					for (int i = 0; i <= v.getIndex(); i++)
 						out.append(declare(v.getName(), i, smtType) + "\n");
 				}
+			}
+			else if (v.getName().equals("return")) {
+				out.append("(declare-fun return () " + smtType + ")\n");
 			}
 			
 		}
@@ -102,11 +113,11 @@ public class SMTInput {
 	
 	private String getSMTType(String type) {
 		String smtType = null;
-		if (type.equals("bool"))
+		if (type.equalsIgnoreCase("bool"))
 			smtType = "Bool";
-		else if (type.equals("int") || type.equals("short"))
+		else if (type.equalsIgnoreCase("int") || type.equalsIgnoreCase("short"))
 			smtType = "Int";
-		else if (type.equals("float") || type.equals("double"))
+		else if (type.equalsIgnoreCase("float") || type.equalsIgnoreCase("double"))
 			smtType = "Real";
 		
 		return smtType;
