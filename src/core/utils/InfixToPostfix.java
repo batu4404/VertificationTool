@@ -69,7 +69,7 @@ public class InfixToPostfix {
     public static boolean isCharactorOfOperand(char c) { // kiem tra xem co phai toan tu
     	//	char operator[] = {'>', '<', '=', '+', '-', '*', '/', ')', '(' , '@', '?', '&'};
     		Arrays.sort(operator);
-    		if (c != ')' && c != ')' && c != ' ' && Arrays.binarySearch(operator, c) < 0)
+    		if (c != ')' && c != '(' && c != ' ' && Arrays.binarySearch(operator, c) < 0)
     			return true;
     		else 
     			return false;

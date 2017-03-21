@@ -199,7 +199,7 @@ public class VtCFG {
 	}
 	
 	public void printMetaSMT(PrintStream printStream) {
-		Printer.printCFGPrefix(printStream, begin, end, "");
+		Printer.printMeta(printStream, begin, end, "");
 	}
 
 	public List<String> getListFomula() {

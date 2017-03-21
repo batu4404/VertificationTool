@@ -183,7 +183,7 @@ public class ConditionNode extends CFGNode {
 //			elseFormula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, notConditionStr, elseFormula);
 			
 			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_AND, thenFormula, elseFormula);
-			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_OR, thenFormula, elseFormula);
+//			formula = FormulaCreater.wrapPrefix(FormulaCreater.LOGIC_OR, thenFormula, elseFormula);
 		}
 		
 		return formula;
@@ -238,6 +238,11 @@ public class ConditionNode extends CFGNode {
 			endOfElseBranch = lastElseSync;
 			lastThenSync.setNext(end);
 		}
+	}
+	
+	@Override
+	public String getConstraint() {
+		return condition.toString();
 	}
 
 }

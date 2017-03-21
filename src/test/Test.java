@@ -23,8 +23,12 @@ public class Test {
 
 		List<CtMethod> methodList = launcher.getMethods();
 
-		CtMethod method = methodList.get(0);
+		CtMethod method = methodList.get(0);		
+		int pos = method.getPosition().getLine();
+		System.out.println("pos: " + pos);
+		System.out.println(method);
 		
+/*		
 		int nLoops = 1;
 		
 		CFGBuilder builder = new CFGBuilder();
@@ -54,5 +58,6 @@ public class Test {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+*/
 	}
 }

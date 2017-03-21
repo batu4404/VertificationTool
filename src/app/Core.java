@@ -49,6 +49,14 @@ public class Core {
 		return methodSignatures;
 	}
 	
+	public int[] getLineNumberOfMethods() {
+		if (lineNumberOfMethods == null) {
+			System.err.println("null");
+			System.exit(1);
+		}
+		return lineNumberOfMethods;
+	}
+	
 	private void create() 
 			throws ModelBuildingException, FileNotFoundException {
 		
@@ -63,11 +71,13 @@ public class Core {
 		
 		int nMethods = methodList.size();
 		methodSignatures = new String[nMethods];
+		lineNumberOfMethods = new int[nMethods];
 		methodCFGList = new ArrayList<>();
 	
 		SMTInput smtInput = new SMTInput();
 		for(int i = 0; i < nMethods; i++) {
 			methodSignatures[i] = methodList.get(i).getSignature();
+			lineNumberOfMethods[i] = methodList.get(i).getPosition().getLine();
 			methodCFGList.add( cfgBuilder.buildCFG(methodList.get(i)).index() );
 		}
 	}
@@ -182,6 +192,7 @@ public class Core {
 	private List<VtCFG> methodCFGList;
 	private SMTInput smtInput;
 	private String[] methodSignatures;
+	int[] lineNumberOfMethods;
 	
 	private UserAssertion userAssertion;
 	

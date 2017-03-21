@@ -1,6 +1,8 @@
 package core.utils;
 
 public class InfixToPrefix {
+	String infix;
+	
 	public static void main(String[] args) {
 		String input = "-1+2*4/5-7+3/6";
         input = "a*-a+ (2*3-1)";
@@ -34,6 +36,11 @@ public class InfixToPrefix {
 		}
         
         System.out.println("test: " + elementMath[0]);
+	}
+	
+	// đảo ngược thứ tự các các phép toán và toán hạng trong biểu thức infix
+	private void reverseInfix() {
+		
 	}
 
 }

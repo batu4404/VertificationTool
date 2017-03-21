@@ -44,12 +44,17 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import app.Core;
+import app.gui.component.SourceCodeTextArea;
 
 
-public class MainPanel extends JPanel {
+public class MainPanelWithSourceCodeHL extends JPanel {
 	
-	public MainPanel() {
+	public MainPanelWithSourceCodeHL() {
 		core = new Core();
 		
 		readDataFile();
@@ -72,6 +77,10 @@ public class MainPanel extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				index = e.getFirstIndex();
+				for (int i: lineNumberOfMethods) {
+					System.out.println("line: " + i);
+				}
+				sourceView.scrollToLine(lineNumberOfMethods[index]);
 				System.out.println("source: " + methodSignatures[index]);
 			}
 		});
@@ -120,9 +129,10 @@ public class MainPanel extends JPanel {
 								core = new Core(file.getAbsolutePath());
 			
 								methodSignatures = core.getMethodSignatures();
+								lineNumberOfMethods = core.getLineNumberOfMethods();
 								list.setListData( methodSignatures );
 							} catch (ModelBuildingException e1) {
-								JOptionPane.showMessageDialog(MainPanel.this,
+								JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
 			                            "Compile error!");
 							} catch (FileNotFoundException e1) {
 								e1.printStackTrace();
@@ -186,7 +196,7 @@ public class MainPanel extends JPanel {
 				| UnsupportedLookAndFeelException e1) {
 			e1.printStackTrace();
 		}
-        SwingUtilities.updateComponentTreeUI(MainPanel.this);
+        SwingUtilities.updateComponentTreeUI(MainPanelWithSourceCodeHL.this);
 
 	}
 	
@@ -350,84 +360,51 @@ public class MainPanel extends JPanel {
 		title.setFont(new Font("Arial", Font.PLAIN, 14));
 		panel.add(title, BorderLayout.PAGE_START);
 		
-		sourceView = new JTextArea();
+	//	sourceView = new RSyntaxTextArea();
+		sourceView = new SourceCodeTextArea();
+		sourceView.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+		sourceView.setCodeFoldingEnabled(true);
 		//sourceView.setEditable(false);
-		JScrollPane spConstraint = new JScrollPane(sourceView);
-		
-		panel.add(spConstraint, BorderLayout.CENTER);
+		RTextScrollPane sp = new RTextScrollPane(sourceView);
+	   
+		panel.add(sp, BorderLayout.CENTER);
 //		panel.setPreferredSize(new Dimension(600, 400));
 		
 		return panel;
 	}
 	
 	private void loadSourceCode() {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String nextLine = "";
-			sourceView.setText("");
-			int position = 0;
-			int lineNo = 100;
-			int countLine = 1;
-			while (true) {
-				nextLine = br.readLine();
-				if (nextLine != null)
-					sourceView.append(nextLine + "\n");
-				else
-					break;
-				
-				if (countLine < lineNo) {
-					countLine++;
-					position = position + 1 + nextLine.length();
-				}
-			}
-		//	sourceView.setCaretPosition(0);
-			sourceView.setCaretPosition(position);
-			br.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		loadFileToTextArea(file, sourceView);
 	}
 	
 	private void loadSMTInput() {
-		File file = new File("input.smt");
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String nextLine = "";
-			smtInput.setText("");
-			while (true) {
-				nextLine = br.readLine();
-				if (nextLine != null)
-					smtInput.append(nextLine + "\n");
-				else
-					break;
-				
-			}
-			smtInput.setCaretPosition(0);
-			br.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		loadFileToTextArea("input.smt", smtInput);
 	}
 	
 	private void loadMetaFile() {
-		File file = new File("metaSMT.txt");
+		loadFileToTextArea("metaSMT.txt", metaSMT);
+	}
+	
+	private void loadFileToTextArea(String path, JTextArea textArea) {
+		File file = new File(path);
+		loadFileToTextArea(file, textArea);
+	}
+	
+	private void loadFileToTextArea(File file, JTextArea textArea) {
+		System.out.println("file: " + file.getName());
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String nextLine = "";
-			metaSMT.setText("");
+			textArea.setText("");
 			while (true) {
 				nextLine = br.readLine();
 				if (nextLine != null)
-					metaSMT.append(nextLine + "\n");
+					textArea.append(nextLine + "\n");
 				else
 					break;
 				
 			}
-			metaSMT.setCaretPosition(0);
+			textArea.setCaretPosition(0);
 			br.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -446,9 +423,9 @@ public class MainPanel extends JPanel {
 			recentDirectory = bf.readLine();
 			bf.close();
 		} catch (FileNotFoundException e) {
-		//	e.printStackTrace();
+			e.printStackTrace();
 		} catch (IOException e) {
-		//	e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
@@ -485,25 +462,17 @@ public class MainPanel extends JPanel {
 		}
 		
 		if ( conditions.size() == 0) {
-			JOptionPane.showMessageDialog(MainPanel.this,
+			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
                     "Constraints aren't empty");
 			return;
 		}
-		
-		/*if (postcondition.equals("") && precondition.equals("")) {
-			JOptionPane.showMessageDialog(MainPanel.this,
-                    "Constraints aren't empty");
-			return;
-		}*/
-		
-		
 		
 //		List<String> constraints = new ArrayList<String>();
 //		constraints = new InfixToPrefix(list).getOutput(constraints);
 //		constraints.add(rawConstraints);
 		
 		if (index < 0) {
-			JOptionPane.showMessageDialog(MainPanel.this,
+			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
                    "You must choose a method!");
 			return;
 		}
@@ -540,7 +509,7 @@ public class MainPanel extends JPanel {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("hello");
-			JOptionPane.showMessageDialog(MainPanel.this,
+			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
                     e.getMessage());
 		}
 	
@@ -555,13 +524,14 @@ public class MainPanel extends JPanel {
 			core = new Core(file.getAbsolutePath());
 
 			methodSignatures = core.getMethodSignatures();
+			lineNumberOfMethods = core.getLineNumberOfMethods();
 			list.setListData( methodSignatures );
 			
 			resultTA.setText("");
 			smtInput.setText("");
 			smtLog.setText("");
 		} catch (ModelBuildingException e1) {
-			JOptionPane.showMessageDialog(MainPanel.this,
+			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
                     "Compile error!");
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -606,7 +576,7 @@ public class MainPanel extends JPanel {
             public void run() {
             	JFrame frame = new JFrame(title);
             	frame.setLayout(new BorderLayout());
-        		JPanel panel = new MainPanel();
+        		JPanel panel = new MainPanelWithSourceCodeHL();
         		
         		frame.add(panel);
         		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -713,12 +683,12 @@ public class MainPanel extends JPanel {
 	
 	JList<String> list;
 	String[] methodSignatures;	// danh sách tên các method
-	
+	int[] lineNumberOfMethods;	// dòng bắt đầu của các method
 	
 	JTextArea preconditionTA;
 	JTextArea postconditionTA;
 	JTextArea resultTA;
-	JTextArea sourceView;
+	SourceCodeTextArea sourceView;
 	JTextArea smtInput;
 	JTextArea smtLog;
 	JTextArea metaSMT;
@@ -733,6 +703,6 @@ public class MainPanel extends JPanel {
 	
 	static String title = "Công cụ kiểm chứng tính chất của chương trình";
 	
-	static String SATLOG = " SAT(post condtion is alwways true)";
-	static String UNSATLOG = "UNSAT(post condition is not always true, example: ";
+	static String SATLOG = "YES, Assertion is alwways true.";
+	static String UNSATLOG = "NO, Assertion is not always true, example: ";
 }

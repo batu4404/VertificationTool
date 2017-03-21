@@ -159,6 +159,48 @@ public class Printer {
 		}
 	}
 	
+	public static void printMeta(PrintStream printStream, 
+			CFGNode node, CFGNode end, String nSpaces) {
+
+	
+		if (node == null || node == end) {
+			return;
+		}	
+		else if (node instanceof LinearNode) {
+			
+			if (node.getConstraint() != null) {
+				printStream.println(nSpaces + node.getConstraint());	
+				System.err.println("node: " + node);
+				System.err.println("constraint: " + node.getConstraint());
+			}
+			
+			printMeta(printStream, node.getNext(), end, nSpaces);	// 4 spaces
+		}
+		else if (node instanceof BeginIf) {
+			BeginIf begin = (BeginIf) node;
+			printMeta(printStream, begin.getNext(), end, nSpaces);
+			printMeta(printStream, begin.getEndNode().getNext(), end, nSpaces);
+		}
+		else if (node instanceof ConditionNode) {
+			ConditionNode cn = (ConditionNode) node;
+			printStream.println(nSpaces + "if ( " + cn.getConstraint() + " ) {");
+			printMeta(printStream, cn.getThenNode(), cn.getEnd() , nSpaces + "    ");	// 4 spaces
+			printStream.println(nSpaces + "}");
+			printStream.println(nSpaces + "else {");
+			printMeta(printStream, cn.getElseNode(), cn.getEnd(), nSpaces + "    ");	// 4 spaces
+			printStream.println(nSpaces + "}");
+			printMeta(printStream, cn.getEnd(), end, nSpaces + "");	// 4 spaces
+		}
+		else {
+			String constraint = node.getConstraint();
+			if ( constraint != null) {
+				printStream.println(nSpaces + constraint);	
+			}
+			printMeta(printStream ,node.getNext(), end, nSpaces);
+		}
+	}
+	
+	
 	/*
 	 * in cfg cho den khi gap end node
 	 */

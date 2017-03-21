@@ -60,7 +60,7 @@ public class LinearNode extends CFGNode {
 	//sau khi unfold cfg 
 	public String getConstraint() {
 		if (statement == null)
-			return "true";
+			return null;
 		else
 			return statement.toString(); //  lam sau
 		
