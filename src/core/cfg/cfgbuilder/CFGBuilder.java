@@ -52,7 +52,7 @@ public class CFGBuilder {
 	
 	List<String> parameters; 
 	
-	private int nLoops = 2;
+	private int nLoops = 6;
 	
 	public CFGBuilder(){}
 	

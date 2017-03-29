@@ -273,16 +273,16 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 		JPanel panel = new JPanel(new BorderLayout());
 		
 		resultTA = new JTextArea();
-		resultTA.setEditable(false);
+	//	resultTA.setEditable(false);
 		
 		smtInput = new JTextArea();
-		smtInput.setEditable(false);
+	//	smtInput.setEditable(false);
 		
 		smtLog = new JTextArea();
-		smtLog.setEditable(false);
+	//	smtLog.setEditable(false);
 		
 		metaSMT = new JTextArea();
-		metaSMT.setEditable(false);
+	//	metaSMT.setEditable(false);
 		
 		
 		JTabbedPane tabbedpane = new JTabbedPane();
@@ -302,7 +302,9 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 		
 	//	title.setFont(new Font("Arial", Font.PLAIN, 14));
 	//	JScrollPane spResult = new JScrollPane(resultTA);
-		tabbedpane.add("Log", new JScrollPane(resultTA));
+		tabbedpane.add("Report", new JScrollPane(resultTA));
+		resultTA.setText("NO, Assertion is not always true, example:\na = 1.0/2.0\nb= 1.0/8.0\nresult= -4.0/15.0\nreturn= -4.0/15.0");
+
 		tabbedpane.add("SMT input", new JScrollPane(smtInput));
 		tabbedpane.add("Solver log", new JScrollPane(smtLog));
 		tabbedpane.add("MetaSMT", new JScrollPane(metaSMT));
@@ -701,8 +703,8 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	File fileRoot;
 	int index = -1;
 	
-	static String title = "Công cụ kiểm chứng tính chất của chương trình";
+	static String title = "VTSE";
 	
 	static String SATLOG = "YES, Assertion is alwways true.";
-	static String UNSATLOG = "NO, Assertion is not always true, example: ";
+	static String UNSATLOG = "NO, Assertion is not always true, by counter example: ";
 }

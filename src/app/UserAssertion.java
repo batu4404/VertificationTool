@@ -5,7 +5,6 @@ import java.util.List;
 
 import core.utils.Helper;
 import core.utils.InfixToPostfix;
-import core.utils.InfixToPrefix;
 
 public class UserAssertion {
 	String input;
@@ -29,13 +28,16 @@ public class UserAssertion {
 		
 		this.input = input;
 		
+		preProcess();
+		
 		reverseInfix();
 		System.out.println("input: " + input);
 		System.out.println("input: " + this.input);
 		
         InfixToPostfix theTrans = new InfixToPostfix(this.input);
 		String postfix = theTrans.doTrans(); 
-	
+		
+		System.out.println("postifx: " + postfix);
         
         elementMath = postfix.split(" ");
        
@@ -56,7 +58,9 @@ public class UserAssertion {
 			}
 		}
         
-        return elementMath[0];
+        String output = elementMath[0];
+        output = postReplace(output);
+        return output;
 	}
 
 	public UserAssertion setParameter(List<String> parameters) {
@@ -117,11 +121,46 @@ public class UserAssertion {
 		input = inputReverse;
 	}
 	
+	
+	/**
+	 * Tiền xử lý input trước khi chuyển đổi
+	 * thay thế các phép toán có 2 kí tự
+	 */
+	private void preProcess() {
+	
+		input = input.replaceAll(">=", "@");
+		
+		input = input.replaceAll("<=", "~");
+		
+	}
+	
+	/**
+	 * xử lý input sau khi chuyển đổi (trả lại tên cho em)
+	 * thay thế lại các phép toán đã được thay thê trong preProcess
+	 */
+	private String postReplace(String str) {
+		str = str.replaceAll("@", ">=");
+		
+		str = str.replaceAll("~", "<=");
+		
+		return str;
+	}
+	
 	public static void main(String[] args) throws IOException {
         String input = "-1+2*4/5-7+3/6";
         input = "a*-a+ (2*3-1)";
         input = "(x - 100) * (y < x)";
-        input = "return = 0";
+        input = "return <= 0";
+        input = "n * (n+1) / 2";
+        
+        if (input.contains("<=")) {
+        	System.out.println("contain <= ");
+        }
+        else {
+        	System.out.println("not contain <= ");
+        }
+//        input = input.replaceAll("<=", "1");
+//        System.out.println("input: " + input);
         String output;
         UserAssertion theTrans = new UserAssertion(input);
         output = theTrans.createUserAssertion(input); 

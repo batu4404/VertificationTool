@@ -1,6 +1,11 @@
-(declare-fun a_0 () Int)
-(declare-fun b_0 () Int)
-(declare-fun max_0 () Int)
-(declare-fun return () Int)
-(assert (or (=> (> a_0 b_0) (= max_0 a_0)) (=> (not (> a_0 b_0)) (= max_0 b_0))))
-(assert (= return max_0))
+(declare-fun a_0 () Real)
+(declare-fun a_1 () Real)
+(declare-fun b_0 () Real)
+(declare-fun result_0 () Real)
+(declare-fun c_0 () Real)
+(declare-fun return () Real)
+(assert (= c_0 (/ 3 (- b_0 3))))
+(assert (and (=> (> a_0 b_0) (and (= result_0 (/ a_0 (- b_0 2))) (= a_1 1))) (=> (not (> a_0 b_0)) (and (= result_0 (+ a_0 b_0)) (= a_1 1)))))
+(assert (= return result_0))
+
+

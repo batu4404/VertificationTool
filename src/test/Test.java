@@ -28,8 +28,8 @@ public class Test {
 		System.out.println("pos: " + pos);
 		System.out.println(method);
 		
-/*		
-		int nLoops = 1;
+		
+		int nLoops = 3;
 		
 		CFGBuilder builder = new CFGBuilder();
 		VtCFG cfg = builder.setNumberOfLoop(nLoops).buildCFG(method);
@@ -58,6 +58,6 @@ public class Test {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-*/
+
 	}
 }

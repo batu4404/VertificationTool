@@ -1,6 +1,7 @@
 package core.utils;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class InfixToPostfix {
@@ -9,7 +10,11 @@ public class InfixToPostfix {
     private String output = "";
     
     
-    public static char operator[] = {'>', '<', '=', '+', '-', '*', '/' , '@', '?', '&'};
+    public static char operator[] = {'>', '<', '=', '+', '-', '*', '/' , '@', '?', '&', '~'};
+    
+    static {
+    	Arrays.sort(operator);
+    }
     
     public InfixToPostfix(String in) {
         input = in;
@@ -68,7 +73,7 @@ public class InfixToPostfix {
     
     public static boolean isCharactorOfOperand(char c) { // kiem tra xem co phai toan tu
     	//	char operator[] = {'>', '<', '=', '+', '-', '*', '/', ')', '(' , '@', '?', '&'};
-    		Arrays.sort(operator);
+    	//	Arrays.sort(operator);
     		if (c != ')' && c != '(' && c != ' ' && Arrays.binarySearch(operator, c) < 0)
     			return true;
     		else 
@@ -121,15 +126,23 @@ public class InfixToPostfix {
             	output = output + " " + chx; 
         }
     }
+    
     public static void main(String[] args) throws IOException {
+    	
+//    	for (char c: operator) {
+//    		System.out.println(c + 0);
+//    	}
+    	
         String input = "-1+2*4/5-7+3/6";
         input = "a*-a+ (2*3-1)";
         input = "(x - 100) * (y < x)";
+        input = "2/(1+n)*n";
         String output;
         InfixToPostfix theTrans = new InfixToPostfix(input);
         output = theTrans.doTrans(); 
         System.out.println("Postfix is " + output + '\n');
     }
+    
     class Stack {
         private int maxSize;
         private char[] stackArray;
