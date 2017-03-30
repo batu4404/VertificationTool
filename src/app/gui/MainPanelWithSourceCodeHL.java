@@ -303,7 +303,6 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	//	title.setFont(new Font("Arial", Font.PLAIN, 14));
 	//	JScrollPane spResult = new JScrollPane(resultTA);
 		tabbedpane.add("Report", new JScrollPane(resultTA));
-		resultTA.setText("NO, Assertion is not always true, example:\na = 1.0/2.0\nb= 1.0/8.0\nresult= -4.0/15.0\nreturn= -4.0/15.0");
 
 		tabbedpane.add("SMT input", new JScrollPane(smtInput));
 		tabbedpane.add("Solver log", new JScrollPane(smtLog));
