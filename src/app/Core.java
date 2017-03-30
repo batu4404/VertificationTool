@@ -44,14 +44,17 @@ public class Core {
 		this();
 		
 		this.pathFile = pathFile;
-		
-		create();
 	}
 	
 	public String[] getMethodSignatures() {
 		return methodSignatures;
 	}
 	
+	
+	/**
+	 * get line number of methods in file
+	 * @return 
+	 */
 	public int[] getLineNumberOfMethods() {
 		if (lineNumberOfMethods == null) {
 			System.err.println("null");
@@ -60,7 +63,12 @@ public class Core {
 		return lineNumberOfMethods;
 	}
 	
-	private void create() 
+	public Core setLoop(int nLoops) {
+		cfgBuilder.setNumberOfLoop(nLoops);
+		return this;
+	}
+	
+	public void create() 
 			throws ModelBuildingException, FileNotFoundException {
 		
 		launcher = new LauncherSpoon();
@@ -78,6 +86,7 @@ public class Core {
 		methodCFGList = new ArrayList<>();
 	
 		SMTInput smtInput = new SMTInput();
+		
 		for(int i = 0; i < nMethods; i++) {
 			methodSignatures[i] = methodList.get(i).getSignature();
 			lineNumberOfMethods[i] = methodList.get(i).getPosition().getLine();
@@ -232,4 +241,6 @@ public class Core {
 	private UserAssertion userAssertionFactory;
 	
 	List<String> result;
+	
+	int nLoop = 3;
 }

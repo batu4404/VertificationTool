@@ -13,47 +13,29 @@ if ( i_0 <= n_0 ) {
             if ( i_3 <= n_0 ) {
                 sum_4 = sum_3 + i_3
                 i_4 = i_3 + 1
-                if ( i_4 <= n_0 ) {
-                    sum_5 = sum_4 + i_4
-                    i_5 = i_4 + 1
-                    if ( i_5 <= n_0 ) {
-                        sum_6 = sum_5 + i_5
-                        i_6 = i_5 + 1
-                    }
-                    else {
-                        
-                        sum_6 = sum_5
-                        i_6 = i_5
-                    }
-                }
-                else {
-                    
-                    sum_6 = sum_4
-                    i_6 = i_4
-                }
             }
             else {
                 
-                sum_6 = sum_3
-                i_6 = i_3
+                sum_4 = sum_3
+                i_4 = i_3
             }
         }
         else {
             
-            sum_6 = sum_2
-            i_6 = i_2
+            sum_4 = sum_2
+            i_4 = i_2
         }
     }
     else {
         
-        sum_6 = sum_1
-        i_6 = i_1
+        sum_4 = sum_1
+        i_4 = i_1
     }
 }
 else {
     
-    sum_6 = sum_0
-    i_6 = i_0
+    sum_4 = sum_0
+    i_4 = i_0
 }
 
-return = sum_6
+return = sum_4

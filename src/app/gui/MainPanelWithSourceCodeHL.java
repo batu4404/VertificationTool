@@ -4,9 +4,12 @@ import spoon.compiler.ModelBuildingException;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -21,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -40,6 +45,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -49,6 +55,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import app.Core;
+import app.gui.component.EmptyNumberFormatter;
 import app.gui.component.SourceCodeTextArea;
 
 
@@ -127,6 +134,8 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 								// ư
 								
 								core = new Core(file.getAbsolutePath());
+								core.setLoop(loop);
+								core.create();
 			
 								methodSignatures = core.getMethodSignatures();
 								lineNumberOfMethods = core.getLineNumberOfMethods();
@@ -265,6 +274,57 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 			}
 		});
 		head.add(vertificationBtn);
+		
+		NumberFormat format = NumberFormat.getInstance();
+		//    NumberFormatter formatter = new NumberFormatter(format);
+	    NumberFormatter formatter = new EmptyNumberFormatter(format);
+	    formatter.setValueClass(Integer.class);
+	    formatter.setMinimum(01);
+	    formatter.setMaximum(Integer.MAX_VALUE);
+	    formatter.setAllowsInvalid(false);
+	    // If you want the value to be committed on each keystroke instead of focus lost
+	    formatter.setCommitsOnValidEdit(true);
+	    loopField = new JFormattedTextField(formatter);
+	    loopField.setColumns(4);
+	    loopField.setText(loop + "");
+	    
+	    JLabel label = new JLabel("Loop: ");
+	    
+	    head.add(label);
+	    head.add(loopField);
+	    
+	    
+	    loopField.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == Event.ENTER) {
+					
+					
+					String text = loopField.getText().toString();
+					
+					if (text.equals("")){;
+						loopField.setText(loop + "");
+					}
+					else {
+						int value = Integer.parseInt(text);
+						loop = value;
+						System.out.println("loop: " + loop);
+					}
+					
+					MainPanelWithSourceCodeHL.this.requestFocusInWindow();
+				}
+			}
+		});
 		
 		return head;
 	}
@@ -449,6 +509,18 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	}
 	
 	private void vertification() {
+		String text = loopField.getText().toString();
+		
+		if (text.equals("")){;
+			loopField.setText(loop + "");
+		}
+		else {
+			int value = Integer.parseInt(text);
+			loop = value;
+			System.out.println("loop: " + loop);
+		}
+		
+		
 		String precondition = preconditionTA.getText();
 		String userAssertion = userAssertionTA.getText();
 		
@@ -456,11 +528,6 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
                     "User's assertion aren't empty");
 		}
-		
-		
-//		List<String> constraints = new ArrayList<String>();
-//		constraints = new InfixToPrefix(list).getOutput(constraints);
-//		constraints.add(rawConstraints);
 		
 		if (index < 0) {
 			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
@@ -475,14 +542,28 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 			
 			String state = outputList.get(0);
 			System.out.println("state: " + state);
-			if (state.equals("unsat"))
-				resultTA.setText(SAT_LOG);
-			else if (state.equals("unknown"))
-				resultTA.setText("Unknown");
+			if (precondition.equals("")) {
+				if (state.equals("unsat"))
+					resultTA.setText(SAT_LOG);
+				else if (state.equals("unknown"))
+					resultTA.setText("Unknown");
+				else {
+					resultTA.append(UNSAT_LOG + "\n");
+					for (int i = 1; i < outputList.size(); i++) {
+						resultTA.append(outputList.get(i) + "\n");
+					}
+				}
+			}
 			else {
-				resultTA.append(UNSAT_LOG + "\n");
-				for (int i = 1; i < outputList.size(); i++) {
-					resultTA.append(outputList.get(i) + "\n");
+				if (state.equals("unsat"))
+					resultTA.setText(SAT_LOG_WITH_PRECONDITION);
+				else if (state.equals("unknown"))
+					resultTA.setText("Unknown");
+				else {
+					resultTA.append(UNSAT_LOG_WITH_PRECONDITION + "\n");
+					for (int i = 1; i < outputList.size(); i++) {
+						resultTA.append(outputList.get(i) + "\n");
+					}
 				}
 			}
 			
@@ -513,6 +594,8 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 			loadSourceCode();
 			
 			core = new Core(file.getAbsolutePath());
+			core.setLoop(loop);
+			core.create();
 
 			methodSignatures = core.getMethodSignatures();
 			lineNumberOfMethods = core.getLineNumberOfMethods();
@@ -683,6 +766,7 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	JTextArea smtInput;
 	JTextArea smtLog;
 	JTextArea metaSMT;
+	JFormattedTextField loopField;
 	
 	private DefaultMutableTreeNode root;
 
@@ -694,8 +778,10 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	
 	static String title = "VTSE";
 	
+	int loop = 3;
+	
 	static String SAT_LOG = "YES, Assertion is alwways true.";
 	static String UNSAT_LOG = "NO, Assertion is not always true, by counter example: ";
-	static String SATLOG_WITH_PRECONDITION = "YES, Assertion is alwways true with pre-condition.";
-	static String UNSATLOG_WITH_PRECONDITION = "NO, Assertion is not always true with precondition, by counter example: ";
+	static String SAT_LOG_WITH_PRECONDITION = "YES, Assertion is alwways true with pre-condition.";
+	static String UNSAT_LOG_WITH_PRECONDITION = "NO, Assertion is not always true with precondition, by counter example: ";
 }
