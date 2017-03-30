@@ -40,7 +40,9 @@ public class Index {
 		}
 		else if (element instanceof CtUnaryOperator) {
 			CtUnaryOperator unaryOp = (CtUnaryOperator) element;
-			unaryOp.getOperand();
+			
+			index(unaryOp.getOperand(), vm);
+			
 			unaryOp.getKind();
 		}
 	}

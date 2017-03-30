@@ -1,15 +1,18 @@
 package app;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import core.utils.Helper;
-import core.utils.InfixToPostfix;
+import core.utils.InfixToPrefix;
+import core.utils.Variable;
 
 public class UserAssertion {
 	String input;
-	List<String> parameters;
-	String[] elementMath;
+	String assertion;
+	List<Variable> parameters;
+	String[] mathElements;
 	
 	public UserAssertion() {
 		
@@ -30,97 +33,50 @@ public class UserAssertion {
 		
 		preProcess();
 		
-		reverseInfix();
-		System.out.println("input: " + input);
-		System.out.println("input: " + this.input);
+		String prefix = InfixToPrefix.infixToPrefix(this.input);
 		
-        InfixToPostfix theTrans = new InfixToPostfix(this.input);
-		String postfix = theTrans.doTrans(); 
 		
-		System.out.println("postifx: " + postfix);
-        
-        elementMath = postfix.split(" ");
-       
-        Helper.reverse(elementMath);
-//        for (String s: elementMath) {
-//        	System.out.println("s: " + s);
-//        }
-        
-        addIndexForParameter();
-        
-        for(int i = elementMath.length - 2; i >= 0; i--) {
-			if( InfixToPostfix.isOperator(elementMath[i].charAt(0)) ) {
-				String temp = "(" + elementMath[i] + " " + elementMath[i+1] + " " + elementMath[i+2] + ")";
-				elementMath[i] = temp;
-				for (int j = i+1; j < elementMath.length-3; j++) {
-					elementMath[j] = elementMath[j+2];
-				}
-			}
+		mathElements = prefix.split(" ");
+		
+		for (String s: mathElements) {
+			System.out.print("-" + s);
 		}
-        
-        String output = elementMath[0];
-        output = postReplace(output);
-        return output;
+		System.out.println(" ");
+		
+		addIndexForParameter();
+		
+		addParenthesis();
+		
+		postReplace();
+		
+        return assertion;
 	}
 
-	public UserAssertion setParameter(List<String> parameters) {
+//	public UserAssertion setParameter(List<String> parameters) {
+//	//	this.parameters = parameters;
+//		return this;
+//	}
+	
+	public UserAssertion setParameter(List<Variable> parameters) {
 		this.parameters = parameters;
 		return this;
 	}
 	
 	private void addIndexForParameter() {
-		if (elementMath == null || parameters == null)
+		if (mathElements == null || parameters == null)
 			return;
-		int length = elementMath.length;
+		int length = mathElements.length;
 		for (int i = 0; i < length; i++) {
-			if (parameters.contains(elementMath[i]) && 
-					!elementMath[i].equalsIgnoreCase("return")) {
-				elementMath[i] = elementMath[i] + "_0";
-			}
-		}
-	}
-	
-	// đảo ngược thứ tự các các phép toán và toán hạng trong biểu thức input
-	private void reverseInfix() {
-		int length = input.length();
-		int i = 0;
-		char ch;
-		String inputReverse = "";
-		String operand;	
-		while (i < length) {
-			ch = input.charAt(i);
-			operand = "";
-			if (InfixToPostfix.isCharactorOfOperand(ch)) {
-				operand += ch;
-				i++;
-				while (i < length && InfixToPostfix.isCharactorOfOperand(input.charAt(i))) {
-					ch = input.charAt(i);
-					operand += ch;	
-					i++;
-				} 
-				System.out.println("operand: " + operand);
-				inputReverse = operand + inputReverse;
-				i--;
-			}
-			else if (ch == ')') {
-				inputReverse = '(' + inputReverse;
-			}
-			else if (ch == '(') {
-				inputReverse = ')' + inputReverse;
-			}
-			else if (ch == ' ') {
-				// do nothing
-			}
-			else {
-				inputReverse = ch + inputReverse;
+			
+			for (int j = 0; j < parameters.size(); j++) {
+				if (parameters.get(j).getName().equals(mathElements[i]) &&
+						!mathElements[i].equalsIgnoreCase("return") ) {
+					mathElements[i] = mathElements[i] + "_0";
+				}
 			}
 			
-			i++;
 		}
-		
-		input = inputReverse;
 	}
-	
 	
 	/**
 	 * Tiền xử lý input trước khi chuyển đổi
@@ -128,22 +84,74 @@ public class UserAssertion {
 	 */
 	private void preProcess() {
 	
+		input = input.replaceAll(" ", "");
 		input = input.replaceAll(">=", "@");
-		
+		System.err.println("after >=: " + input);
 		input = input.replaceAll("<=", "~");
-		
+		System.err.println("after >=: " + input);
 	}
 	
 	/**
 	 * xử lý input sau khi chuyển đổi (trả lại tên cho em)
 	 * thay thế lại các phép toán đã được thay thê trong preProcess
 	 */
-	private String postReplace(String str) {
-		str = str.replaceAll("@", ">=");
+	private void postReplace() {
+		assertion = assertion.replaceAll("@", ">=")
+						.replaceAll("~", "<=")
+						.replaceAll("&", "and")
+						.replaceAll("!", "not");
+	}
+	
+	private void addParenthesis() {
+		boolean isInteger = true;
+		String type;
+		for(int i = mathElements.length - 2; i >= 0; i--) {
+			if( InfixToPrefix.isOperator(mathElements[i].charAt(0)) ) {
+				
+				if ( isInteger ) {
+					type = getType(mathElements[i+1]);
+					if (type.equals("double") || type.equals("float")) {
+						isInteger = false;
+					}
+					type = getType(mathElements[i+2]);
+					if (type.equals("double") || type.equals("float")) {
+						isInteger = false;
+					}
+				}
+				
+				if (mathElements[i].equals("/")) {
+					if ( isInteger ) {
+						mathElements[i] = "div";
+					}
+				}
+				
+				String temp = "(" + mathElements[i] + " " + mathElements[i+1] + " " + mathElements[i+2] + ")";
+				
+				mathElements[i] = temp;
+				for (int j = i+1; j < mathElements.length-2; j++) {
+					mathElements[j] = mathElements[j+2];
+				}
+			}
+		}
 		
-		str = str.replaceAll("~", "<=");
+		assertion = mathElements[0];
+		System.out.println("assertion: " + assertion);
+	}
+	
+	private String getType(String operand) {
+		if (parameters == null)
+			return "";
 		
-		return str;
+		String type = "";
+		
+		for (int i = 0; i < parameters.size(); i++) {
+			if ( parameters.get(i).getName().equals(operand) ) {
+				type = parameters.get(i).getType();
+				break;
+			}
+		}
+		
+		return type;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -151,7 +159,13 @@ public class UserAssertion {
         input = "a*-a+ (2*3-1)";
         input = "(x - 100) * (y < x)";
         input = "return <= 0";
-        input = "n * (n+1) / 2";
+        input = "return = n*(n+1) / 2";
+     //   input = "return * return > 1";
+        input = "(a>= 0)&(a<=1)";
+        input = "return * return > (a+b)/2";
+        
+        List<Variable> parameters = new ArrayList<>();
+        parameters.add(new Variable("int", "n"));
         
         if (input.contains("<=")) {
         	System.out.println("contain <= ");
@@ -163,6 +177,7 @@ public class UserAssertion {
 //        System.out.println("input: " + input);
         String output;
         UserAssertion theTrans = new UserAssertion(input);
+        theTrans.setParameter(parameters);
         output = theTrans.createUserAssertion(input); 
         System.out.println("prefix is " + output + '\n');
     }

@@ -7,11 +7,14 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SpringLayout.Constraints;
+
 import core.cfg.cfgbuilder.CFGBuilder;
 import core.cfg.declaration.VtCFG;
 import core.solver.SMTInput;
 import core.solver.Z3Runner;
 import core.utils.LauncherSpoon;
+import core.utils.PrefixToInfix;
 import core.utils.Variable;
 import spoon.compiler.ModelBuildingException;
 import spoon.compiler.SpoonCompiler;
@@ -33,7 +36,7 @@ public class Core {
 	public Core() {
 		smtInput = new SMTInput();
 		cfgBuilder = new CFGBuilder();
-		userAssertion = new UserAssertion();
+		userAssertionFactory = new UserAssertion();
 	}
 	
 	public Core(String pathFile)
@@ -82,9 +85,8 @@ public class Core {
 		}
 	}
 	
-	public List<String> runSolver(String methodSignature,List<String> conditions) 
-				throws Exception {
-
+	public List<String> runSolver(String methodSignature, 
+			String userAssertion, String preCondition) throws Exception {
 
 		int index = find(methodSignatures, methodSignature);
 		
@@ -115,15 +117,27 @@ public class Core {
 		smtInput.setListVariables(mf.getVariableManager().getListVariables());
 		
 		String constraintTemp;
-		for(int i = 0; i < conditions.size(); i++) {
-			constraintTemp = userAssertion.setParameter(mf.getParameters())
-								.createUserAssertion(conditions.get(i));
-			constraintTemp = "(not " + constraintTemp + ")";
-			conditions.set(i, constraintTemp);
+//		for(int i = 0; i < conditions.size(); i++) {
+//			for (Variable v: mf.getParameters()) {
+//				System.err.println("p: " + v.getName());
+//			}
+//			constraintTemp = userAssertionFactory.setParameter(mf.getParameters())
+//								.createUserAssertion(conditions.get(i));
+//			constraintTemp = "(not " + constraintTemp + ")";
+//			conditions.set(i, constraintTemp);
+//		}
+		List<String> constraints = new ArrayList<>();
+		
+		userAssertionFactory.setParameter(mf.getParameters());
+		if (preCondition != null) {
+			constraintTemp = userAssertionFactory.createUserAssertion(preCondition);
+			constraints.add(constraintTemp);
 		}
 		
-		List<String> constraints = new ArrayList<>();
-		constraints.addAll(conditions);
+		constraintTemp = userAssertionFactory.createUserAssertion(userAssertion);
+		constraintTemp = "(not " + constraintTemp + ")";
+		constraints.add(constraintTemp);
+		
 		smtInput.setConstraints(constraints);
 	    smtInput.printInputToOutputStream(fo);
 	 //   List<String> result = Z3Runner.runZ3(fileDir);
@@ -131,7 +145,7 @@ public class Core {
 	    result.forEach(System.out::println);
 	    
 	    List<String> result1 = new ArrayList<String>();
-	    List<Variable> parameters = mf.getVariableManager().getListVariables();
+	    List<Variable> parameters = mf.getParameters();
 	    result1.add(result.get(0));
 	    for (Variable v: parameters) {
 	    	String varName = v.getName() + "_0"; 
@@ -141,9 +155,16 @@ public class Core {
 	    			String valueLine = result.get(i+1);
 	//    			System.out.println("value: " + valueLine);
 	//    			System.out.println("indexof(\"(\"): " + valueLine.indexOf("("));
-	    			valueLine = valueLine.replace('(', ' ');
-	    			valueLine = valueLine.replace(')', ' ');
-	    			valueLine = valueLine.replace(" ", "");
+//	    			valueLine = valueLine.replace('(', ' ');
+//	    			valueLine = valueLine.replace(')', ' ');
+//	    			valueLine = valueLine.trim();
+//	    			
+//	    			
+//	    			
+//	    			valueLine = valueLine.replace(" ", "");
+	    			
+	    			valueLine = getValue(valueLine);
+	    			
 	//    			System.out.println("value: " + valueLine);
 	    			result1.add(v.getName() + " = " + valueLine);
 	    			break;
@@ -155,12 +176,14 @@ public class Core {
 	 	   
     		if (result.get(i).indexOf("return") >= 0) {
     			String valueLine = result.get(i+1);
-    			System.out.println("value: " + valueLine);
-    			System.out.println("indexof(\"(\"): " + valueLine.indexOf("("));
-    			valueLine = valueLine.replace('(', ' ');
-    			valueLine = valueLine.replace(')', ' ');
-    			valueLine = valueLine.replace(" ", "");
-    			System.out.println("value: " + valueLine);
+//    			System.out.println("value: " + valueLine);
+//    			System.out.println("indexof(\"(\"): " + valueLine.indexOf("("));
+//    			valueLine = valueLine.replace('(', ' ');
+//    			valueLine = valueLine.replace(')', ' ');
+//    			valueLine = valueLine.replace(" ", "");
+//    			System.out.println("value: " + valueLine);
+    			
+    			valueLine = getValue(valueLine);
     			result1.add("return = " + valueLine);
     			break;
     		}
@@ -168,6 +191,7 @@ public class Core {
 	    
 	    return result1;
 	}
+
 	
 	public List<String> getSolverLog() {
 		return result;
@@ -185,6 +209,17 @@ public class Core {
 		return -1;
 	}
 	
+	private String getValue(String valueLine) {
+		valueLine = valueLine.replace('(', ' ');
+		valueLine = valueLine.replace(')', ' ');
+		valueLine = valueLine.trim();
+		
+		String value = PrefixToInfix.prefixToInfix(valueLine);
+		
+		return value;
+	}
+	
+	
 	LauncherSpoon launcher;
 	CFGBuilder cfgBuilder;
 	
@@ -194,7 +229,7 @@ public class Core {
 	private String[] methodSignatures;
 	int[] lineNumberOfMethods;
 	
-	private UserAssertion userAssertion;
+	private UserAssertion userAssertionFactory;
 	
 	List<String> result;
 }

@@ -42,6 +42,7 @@ public class TestSpoon
 		return result;
 	}
 	
+	
 	public static double abs(double x) {
 		double abs = x;
 		if (x < 0) {

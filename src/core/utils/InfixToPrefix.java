@@ -1,46 +1,188 @@
 package core.utils;
 
+import java.util.Arrays;
+import java.util.Stack;
+
 public class InfixToPrefix {
-	String infix;
+
+	static Stack<Character> stack = new Stack<>();
+	
+	public static char operator[] = {'(', ')', '>', '<', '=', '+', '-', '*', '/' , '@', '?', '&', '~'};
+    
+    static {
+    	Arrays.sort(operator);
+    }
 	
 	public static void main(String[] args) {
-		String input = "-1+2*4/5-7+3/6";
-        input = "a*-a+ (2*3-1)";
-        input = "-10 + (x - 100) * (y < x)";
-        input = "n * (n + 1) / 2";
-        String output;
-        InfixToPostfix theTrans = new InfixToPostfix(input);
-        output = theTrans.doTrans(); 
-        System.out.println("Postfix is " + output + '\n');
-        
-        String[] elementMath = output.split(" ");
-       
-        Helper.reverse(elementMath);
-        for (String s: elementMath) {
+	    String infix = "n1*(n+1)/2";
+	    infix = "return*return>(a+b)/2";
+	 //   infix = "return+(a+b)/2";
+	//    infix = "(a~0)&(a-1)";
+
+		String prefix = infixToPrefix(infix);
+		
+		System.out.println("prefix: " + prefix);
+				
+		String[] elementMath = prefix.split(" ");
+	    
+		for (String s: elementMath) {
         	System.out.print("  " + s);
         }
-        
-        System.out.println("  ");
-        
-        String prefix = "";
-        
-        for(int i = elementMath.length - 2; i >= 0; i--) {
-			if( InfixToPostfix.isOperator(elementMath[i].charAt(0)) ) {
-				
-				String temp = "(" + elementMath[i] + " " + elementMath[i+1] + " " + elementMath[i+2] + ")";
-				elementMath[i] = temp;
-				for (int j = i+1; j < elementMath.length-3; j++) {
-					elementMath[j] = elementMath[j+2];
+		
+		reverse(elementMath);
+	}
+	
+	
+	public static String infixToPrefix(String infix) {
+		
+		String prefix = "";
+		char ch;
+		infix = reverse(infix);
+		
+		int length = infix.length();
+		String operand = "";
+		System.out.printf("reverse: %s\n", infix);
+		for (int i = 0; i < infix.length(); i++) {
+			ch = infix.charAt(i);
+			
+			if (ch == ' ') {
+				continue;
+			}
+			else if ( !isOperator(ch) ) {
+				operand = "" + ch;
+            	i++;
+				while (i < length && isCharactorOfOperand(infix.charAt(i)) ) {
+            		ch = infix.charAt(i);
+            		operand = ch + operand;
+            		i++;
+            	}
+				prefix += " " + operand;
+				i--;
+				System.out.println("operand: " + ch);
+			} 
+			else {
+				if (ch == ')') {
+					System.out.println("hello wro");
+					stack.push(ch);
+					System.out.println("prefix: " + prefix);
+					if (stack.isEmpty()) {
+						System.out.println("stack is emptyyyyyyyyyy");
+					}
+				} 
+				else if(ch == '(') {
+					System.out.println("size: " + stack.size());
+					if (stack.isEmpty()) {
+						System.out.println("stack is empty");
+					}
+					while (stack.peek() != ')') {
+						System.err.println("stack peek: " + stack.peek());
+						System.err.println("prefix: " + prefix);
+						if (stack.peek() == ')') {
+							System.out.println("bang rooi");
+						}
+						prefix += " " + stack.pop();
+					}
+					
+					if (stack.peek() == ')') {
+						System.out.println("bang ro00000000000oi");
+						System.out.println("prefix: " + prefix);
+					}
+					stack.pop();
+				} 
+				else {
+					if (stack.isEmpty()) {
+						stack.push(ch);
+					}
+					else if (priority(stack.peek()) <= priority(ch)) {
+						System.out.println("ch: " + ch);
+						stack.push(ch);
+					} 
+					else {
+						while(!stack.isEmpty() && priority(stack.peek()) >= priority(ch)) {
+							if (stack.peek() == ')') {
+								System.out.println("bangggggg rooi");
+							}
+							prefix += " " + stack.pop();
+						}
+						stack.push(ch);
+					}
 				}
 			}
 		}
-        
-        System.out.println("test: " + elementMath[0]);
+		while ( !stack.isEmpty()) {
+			prefix += " " + stack.pop();
+		}
+
+		stack.clear();
+		
+		String[] elementMath = prefix.split(" ");
+		reverse(elementMath);
+		
+		prefix = "";
+		
+		for (String s: elementMath) {
+			prefix += " " + s;
+		}
+
+		
+		return prefix.trim();
 	}
 	
-	// đảo ngược thứ tự các các phép toán và toán hạng trong biểu thức infix
-	private void reverseInfix() {
+	/**
+	 * reverse a string
+	 * @param input
+	 * @return reverse of the input
+	 */
+	public static String reverse(String input) 
+	{
+		String result = "";
+		for (int i = input.length()-1; i >= 0;--i) {
+			result += input.charAt(i);
+		}
 		
+		return result;
+	}
+	
+	
+	public static int priority(char c)
+	{
+		if (c == '+' || c == '-') 
+			return 1;
+		else if ( c == '*' || c == '/' || c == '%') 
+			return 2;
+		else if ( c == '>' || c == '<' || c == '~' || c == '@') 
+			return -1;
+		else if ( c == '&') 
+			return -2;
+		else if ( c == ')')
+			return -5;
+		else 
+			return 0;
+	}
+	
+	public static boolean isOperator(char c) { // kiem tra xem co phai toan tu
+		
+		Arrays.sort(operator);
+		if (Arrays.binarySearch(operator, c) > -1)
+			return true;
+		else 
+			return false;
+	}
+	
+	// kiem tra la ki tu cua so hang
+	public static boolean isCharactorOfOperand(char c) { 
+		return c != ' ' && !isOperator(c);
+	}
+	
+	public static void reverse(String[] arr) {
+		int length = arr.length;
+		int n = arr.length / 2;
+		String temp;
+		for (int i = 0; i < n; i++) {
+			temp = arr[i];
+			arr[i] = arr[length-i-1];
+			arr[length-i-1] = temp;
+		}
 	}
 
 }

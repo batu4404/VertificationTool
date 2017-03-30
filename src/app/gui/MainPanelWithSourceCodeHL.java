@@ -336,13 +336,13 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 		
 		JLabel label1 = new JLabel("Pre-condition:");
 		label1.setFont(new Font("Serif", Font.ITALIC, 14));
-		JLabel label2 = new JLabel("Post-condition:");
+		JLabel label2 = new JLabel("User's Assertion");
 		label2.setFont(new Font("Serif", Font.ITALIC, 14));
 		preconditionTA = new JTextArea();
-		postconditionTA = new JTextArea();
+		userAssertionTA = new JTextArea();
 		JScrollPane spConstraint1 = new JScrollPane(preconditionTA);
 	
-		JScrollPane spConstraint = new JScrollPane(postconditionTA);
+		JScrollPane spConstraint = new JScrollPane(userAssertionTA);
 		
 		JSplitPane tmp1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, label1, spConstraint1);
 		tmp1.setDividerLocation(30);
@@ -451,23 +451,13 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	
 	private void vertification() {
 		String precondition = preconditionTA.getText();
-		String postcondition = postconditionTA.getText();
+		String userAssertion = userAssertionTA.getText();
 		
-		List<String> conditions = new ArrayList<>();
-		
-		if ( !precondition.equals("") ) {
-			conditions.add(precondition);
-		}
-		
-		if ( !postcondition.equals("")) {
-			conditions.add(postcondition);
-		}
-		
-		if ( conditions.size() == 0) {
+		if ( userAssertion.equals("")) {
 			JOptionPane.showMessageDialog(MainPanelWithSourceCodeHL.this,
-                    "Constraints aren't empty");
-			return;
+                    "User's assertion aren't empty");
 		}
+		
 		
 //		List<String> constraints = new ArrayList<String>();
 //		constraints = new InfixToPrefix(list).getOutput(constraints);
@@ -481,17 +471,17 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 		try {
 			resultTA.setText("");
 			
-			List<String> outputList = core.runSolver(methodSignatures[index], conditions);
+			List<String> outputList = core.runSolver(methodSignatures[index], userAssertion, precondition);
 			List<String> solverLog = core.getSolverLog();
 			
 			String state = outputList.get(0);
 			System.out.println("state: " + state);
 			if (state.equals("unsat"))
-				resultTA.setText(SATLOG);
+				resultTA.setText(SAT_LOG);
 			else if (state.equals("unknown"))
 				resultTA.setText("Unknown");
 			else {
-				resultTA.append(UNSATLOG + "\n");
+				resultTA.append(UNSAT_LOG + "\n");
 				for (int i = 1; i < outputList.size(); i++) {
 					resultTA.append(outputList.get(i) + "\n");
 				}
@@ -688,7 +678,7 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	int[] lineNumberOfMethods;	// dòng bắt đầu của các method
 	
 	JTextArea preconditionTA;
-	JTextArea postconditionTA;
+	JTextArea userAssertionTA;
 	JTextArea resultTA;
 	SourceCodeTextArea sourceView;
 	JTextArea smtInput;
@@ -705,6 +695,8 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	
 	static String title = "VTSE";
 	
-	static String SATLOG = "YES, Assertion is alwways true.";
-	static String UNSATLOG = "NO, Assertion is not always true, by counter example: ";
+	static String SAT_LOG = "YES, Assertion is alwways true.";
+	static String UNSAT_LOG = "NO, Assertion is not always true, by counter example: ";
+	static String SATLOG_WITH_PRECONDITION = "YES, Assertion is alwways true with pre-condition.";
+	static String UNSATLOG_WITH_PRECONDITION = "NO, Assertion is not always true with precondition, by counter example: ";
 }

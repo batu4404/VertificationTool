@@ -25,7 +25,7 @@ public class VtCFG {
 	CtMethod method;
 	VariableManager vm;
 	
-	List<String> parameters; // danh sách tên các tham sô + return (nếu hàm có trả về giá trị)
+	List<Variable> parameters; // danh sách tên các tham sô + return (nếu hàm có trả về giá trị)
 	String returnType;	// phương thức có trả về giá trị hay là kiểu void
 	
 	public VtCFG() {
@@ -107,14 +107,14 @@ public class VtCFG {
 	/**
 	 * @return the parameters
 	 */
-	public List<String> getParameters() {
+	public List<Variable> getParameters() {
 		return parameters;
 	}
 
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void setParameters(List<String> parameters) {
+	public void setParameters(List<Variable> parameters) {
 		this.parameters = parameters;
 	}
 

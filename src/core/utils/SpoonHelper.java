@@ -13,7 +13,6 @@ public class SpoonHelper {
 	public static BinaryOperatorKind 
 					unaryKindToBinaryKind(UnaryOperatorKind unaryKind) 
 	{
-		
 		if (unaryKind == UnaryOperatorKind.POSTDEC
 				|| unaryKind == UnaryOperatorKind.PREDEC) {
 			return BinaryOperatorKind.MINUS;
@@ -55,6 +54,18 @@ public class SpoonHelper {
 			opStr = "distinct";
 		else 
 			System.out.println("operator: " + operator);
+		
+		return opStr;
+	}
+	
+	public static String getStringUnaryOperationKind(UnaryOperatorKind operator) {
+		String opStr = "";
+		if(operator == UnaryOperatorKind.NEG )
+			opStr = "-";
+		else if(operator == UnaryOperatorKind.NOT)
+			opStr = "not";
+		else if(operator == UnaryOperatorKind.POS)
+			opStr = "+";
 		
 		return opStr;
 	}

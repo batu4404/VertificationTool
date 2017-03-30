@@ -50,7 +50,7 @@ import spoon.support.reflect.code.CtBlockImpl;
 public class CFGBuilder {
 	CtMethod method;
 	
-	List<String> parameters; 
+	List<Variable> parameters; 
 	
 	private int nLoops = 6;
 	
@@ -91,7 +91,7 @@ public class CFGBuilder {
 		cfg.setReturnType(returnType.toString());
 		
 		if (!returnType.toString().equals("void")) {
-			parameters.add("return");
+			parameters.add(new Variable(returnType.getTypeDeclaration().toString(), "return"));
 		}
 		
 		cfg.setParameters(parameters);
@@ -402,7 +402,7 @@ public class CFGBuilder {
 		VariableManager vm = new VariableManager();
 		List<CtParameter> params = method.getParameters();
 		
-		parameters = new ArrayList<String>();
+		parameters = new ArrayList<Variable>();
 		
 		String name;
 		String type;
@@ -413,7 +413,7 @@ public class CFGBuilder {
 			var.setIndex(0); // chỉ số của tham biến khi bắt đầu method là 0
 			vm.addVariable(var);
 			
-			parameters.add(param.getSimpleName());
+			parameters.add(var);
 		}
 		
 		List<CtElement> listEle = method.getElements(new TypeFilter(CtLocalVariable.class));

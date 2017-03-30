@@ -70,10 +70,17 @@ public class FormulaCreater {
 			return element.toString();
 		}
 		else if (element instanceof CtUnaryOperator) {
+			
 			CtUnaryOperator unaryOp = (CtUnaryOperator) element;
-			unaryOp.getOperand();
-			unaryOp.getKind();
-			return null;
+			String operand = createFormula(unaryOp.getOperand());
+			String kind = SpoonHelper.getStringUnaryOperationKind(unaryOp.getKind());
+			
+			String op = "(" + kind + " " + operand + ")";
+			
+			System.err.println("op: " + op);
+		//	System.err.println("unary: " + unaryOp.getKind());
+			
+			return op;
 		}
 		else {
 			return null;

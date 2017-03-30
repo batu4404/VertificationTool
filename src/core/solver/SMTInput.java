@@ -92,7 +92,6 @@ public class SMTInput {
 			else if (v.getName().equals("return")) {
 				out.append("(declare-fun return () " + smtType + ")\n");
 			}
-			
 		}
 		
 		
