@@ -35,27 +35,17 @@ public class UserAssertion {
 		
 		String prefix = InfixToPrefix.infixToPrefix(this.input);
 		
-		
 		mathElements = prefix.split(" ");
 		
-		for (String s: mathElements) {
-			System.out.print("-" + s);
-		}
-		System.out.println(" ");
+		addParenthesis();
 		
 		addIndexForParameter();
-		
-		addParenthesis();
 		
 		postReplace();
 		
         return assertion;
 	}
 
-//	public UserAssertion setParameter(List<String> parameters) {
-//	//	this.parameters = parameters;
-//		return this;
-//	}
 	
 	public UserAssertion setParameter(List<Variable> parameters) {
 		this.parameters = parameters;
@@ -67,7 +57,6 @@ public class UserAssertion {
 			return;
 		int length = mathElements.length;
 		for (int i = 0; i < length; i++) {
-			
 			for (int j = 0; j < parameters.size(); j++) {
 				if (parameters.get(j).getName().equals(mathElements[i]) &&
 						!mathElements[i].equalsIgnoreCase("return") ) {
@@ -75,6 +64,20 @@ public class UserAssertion {
 				}
 			}
 			
+		}
+		
+		String old;
+		String replacement;
+		for (Variable v: parameters) {
+			if (!v.getName().equals("return")) {
+				old = " " + v.getName() + " ";
+				replacement = " " + v.getName() + "_0" + " ";
+				assertion = assertion.replaceAll(old, replacement);
+				
+				old = String.format(" %s\\)", v.getName());
+				replacement = String.format(" %s_0\\)", v.getName());
+				assertion = assertion.replaceAll(old, replacement);
+			}
 		}
 	}
 	
@@ -84,11 +87,10 @@ public class UserAssertion {
 	 */
 	private void preProcess() {
 	
-		input = input.replaceAll(" ", "");
-		input = input.replaceAll(">=", "@");
-		System.err.println("after >=: " + input);
-		input = input.replaceAll("<=", "~");
-		System.err.println("after >=: " + input);
+		input = input.replaceAll(" ", "")
+					.replaceAll(">=", "@")
+					.replaceAll("<=", "~");
+		
 	}
 	
 	/**
@@ -110,19 +112,23 @@ public class UserAssertion {
 				
 				if ( isInteger ) {
 					type = getType(mathElements[i+1]);
+					System.out.println("type 1: " + type);
 					if (type.equals("double") || type.equals("float")) {
+						System.out.println("hellow");
 						isInteger = false;
+						System.out.println("is integer 1 : " + isInteger);
 					}
 					type = getType(mathElements[i+2]);
+					System.out.println("type 2: " + type);
 					if (type.equals("double") || type.equals("float")) {
 						isInteger = false;
+						System.out.println("is integer 2: " + isInteger);
 					}
 				}
 				
-				if (mathElements[i].equals("/")) {
-					if ( isInteger ) {
-						mathElements[i] = "div";
-					}
+				if (mathElements[i].equals("/") && isInteger) {
+					System.err.println("is integer: " + isInteger);
+					mathElements[i] = "div";
 				}
 				
 				String temp = "(" + mathElements[i] + " " + mathElements[i+1] + " " + mathElements[i+2] + ")";
@@ -143,11 +149,11 @@ public class UserAssertion {
 			return "";
 		
 		String type = "";
+		System.out.println("operand: " + operand);
 		
 		for (int i = 0; i < parameters.size(); i++) {
 			if ( parameters.get(i).getName().equals(operand) ) {
-				type = parameters.get(i).getType();
-				break;
+				return parameters.get(i).getType();
 			}
 		}
 		
@@ -165,14 +171,16 @@ public class UserAssertion {
         input = "return * return > (a+b)/2";
         
         List<Variable> parameters = new ArrayList<>();
-        parameters.add(new Variable("int", "n"));
+        parameters.add(new Variable("double", "return"));
+        parameters.add(new Variable("double", "a"));
+        parameters.add(new Variable("double", "b"));
         
         if (input.contains("<=")) {
         	System.out.println("contain <= ");
         }
         else {
         	System.out.println("not contain <= ");
-        }
+        }	
 //        input = input.replaceAll("<=", "1");
 //        System.out.println("input: " + input);
         String output;

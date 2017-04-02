@@ -780,8 +780,8 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	
 	int loop = 3;
 	
-	static String SAT_LOG = "YES, Assertion is alwways true.";
-	static String UNSAT_LOG = "NO, Assertion is not always true, by counter example: ";
-	static String SAT_LOG_WITH_PRECONDITION = "YES, Assertion is alwways true with pre-condition.";
-	static String UNSAT_LOG_WITH_PRECONDITION = "NO, Assertion is not always true with precondition, by counter example: ";
+	static String SAT_LOG = "YES, User's assertion is always true.";
+	static String UNSAT_LOG = "<em>NO</em>, User's assertion is not always true, by a counter example: ";
+	static String SAT_LOG_WITH_PRECONDITION = "YES, User's assertion is always true with pre-condition.";
+	static String UNSAT_LOG_WITH_PRECONDITION = "<em>NO</em>, User's assertion is not always true with precondition, by a counter example: ";
 }

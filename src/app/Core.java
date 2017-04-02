@@ -138,7 +138,7 @@ public class Core {
 		List<String> constraints = new ArrayList<>();
 		
 		userAssertionFactory.setParameter(mf.getParameters());
-		if (preCondition != null) {
+		if (!preCondition.equals("")) {
 			constraintTemp = userAssertionFactory.createUserAssertion(preCondition);
 			constraints.add(constraintTemp);
 		}

@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -262,8 +263,10 @@ public class MainPanel extends JPanel {
 	private JPanel createContraintsPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		
-		resultTA = new JTextArea();
+		resultTA = new JTextPane();
 		resultTA.setEditable(false);
+		resultTA.setContentType("text/html");
+		resultTA.setText("<p style='font-weight:bold;font-size:14;font-family:arial'>hello</h1>");
 		
 		smtInput = new JTextArea();
 		smtInput.setEditable(false);
@@ -520,10 +523,13 @@ public class MainPanel extends JPanel {
 			else if (state.equals("unknown"))
 				resultTA.setText("Unknown");
 			else {
-				resultTA.append(UNSATLOG + "\n");
+				String text;
+				text = UNSATLOG + "\n";
 				for (int i = 1; i < outputList.size(); i++) {
-					resultTA.append(outputList.get(i) + "\n");
+					text += outputList.get(i) + "\n";
 				}
+				
+				resultTA.setText(text);
 			}
 			
 			loadSMTInput();
@@ -717,7 +723,7 @@ public class MainPanel extends JPanel {
 	
 	JTextArea preconditionTA;
 	JTextArea postconditionTA;
-	JTextArea resultTA;
+	JTextPane resultTA;
 	JTextArea sourceView;
 	JTextArea smtInput;
 	JTextArea smtLog;

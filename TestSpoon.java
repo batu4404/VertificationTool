@@ -2,6 +2,16 @@
 public class TestSpoon
 {
 	
+	public static int factorial(int n) {
+		int fac = 1;
+		
+		for (int i = 1; i <= n; i++) {
+			fac = fac * i;
+		}
+		
+		return fac;
+	}
+	
 	public static int sum(int n) {
 		int sum = 0;
 		
