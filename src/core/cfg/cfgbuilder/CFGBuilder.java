@@ -204,6 +204,8 @@ public class CFGBuilder {
 		
 		EndCondition end = new EndCondition();
 		
+		EmptyNode emptyNode;
+		
 		CFGNode lastNode = end;
 		for (int i = 0; i < nLoops; i++) {
 			
@@ -216,9 +218,16 @@ public class CFGBuilder {
 			condition.setEndOfThenBranch(lastNode);
 			
 			condition.setElseNode(end);
+			
+			emptyNode = new EmptyNode();
+			condition.setElseNode(emptyNode);
+			condition.setEndOfElseBranch(emptyNode);
+			emptyNode.setNext(end);
+			
 			condition.setEnd(end);
 			
 			lastNode = condition;
+			
 		}
 		
 		return new PairNode(lastNode, end);

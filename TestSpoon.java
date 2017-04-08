@@ -1,6 +1,25 @@
 
 public class TestSpoon
 {
+
+	public static int foo(int flag, int n)
+	{
+		int k = 1;
+		if(flag > 0) 
+			k = n*n;
+		
+		int i = 0, j = 0;
+
+		while(i <= n) {
+			i++;
+			j = j + i;
+		}
+
+		int z = k + i + j;
+
+		return z;
+	}
+/*
 	
 	public int factorial(int n) {
 		int fac = 1;
@@ -61,5 +80,6 @@ public class TestSpoon
 		
 		return abs;
 	}
+*/
 
 }
