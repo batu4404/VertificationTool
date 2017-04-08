@@ -91,7 +91,8 @@ public class UserAssertion {
 					.replaceAll(">=", "@")
 					.replaceAll("<=", "~")
 					.replaceAll("&&", "&")
-					.replaceAll("\\^", "&");
+					.replaceAll("\\^", "&")
+					.replaceAll("!=", "?");
 		
 	}
 	
@@ -103,7 +104,8 @@ public class UserAssertion {
 		assertion = assertion.replaceAll("@", ">=")
 						.replaceAll("~", "<=")
 						.replaceAll("&", "and")
-						.replaceAll("!", "not");
+						.replaceAll("!", "not")
+						.replaceAll("\\?", "distinct");
 	}
 	
 	private void addParenthesis() {
@@ -171,6 +173,7 @@ public class UserAssertion {
      //   input = "return * return > 1";
         input = "(a>= 0)^(a<=1)";
     //    input = "return * return > (a+b)/2";
+        input = "a != b";
         
         List<Variable> parameters = new ArrayList<>();
         parameters.add(new Variable("double", "return"));
