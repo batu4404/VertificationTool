@@ -89,7 +89,9 @@ public class UserAssertion {
 	
 		input = input.replaceAll(" ", "")
 					.replaceAll(">=", "@")
-					.replaceAll("<=", "~");
+					.replaceAll("<=", "~")
+					.replaceAll("&&", "&")
+					.replaceAll("\\^", "&");
 		
 	}
 	
@@ -167,8 +169,8 @@ public class UserAssertion {
         input = "return <= 0";
         input = "return = n*(n+1) / 2";
      //   input = "return * return > 1";
-        input = "(a>= 0)&(a<=1)";
-        input = "return * return > (a+b)/2";
+        input = "(a>= 0)^(a<=1)";
+    //    input = "return * return > (a+b)/2";
         
         List<Variable> parameters = new ArrayList<>();
         parameters.add(new Variable("double", "return"));
@@ -181,8 +183,8 @@ public class UserAssertion {
         else {
         	System.out.println("not contain <= ");
         }	
-//        input = input.replaceAll("<=", "1");
-//        System.out.println("input: " + input);
+     //   input = input.replaceAll("\\^", "&");
+        System.out.println("input: " + input);
         String output;
         UserAssertion theTrans = new UserAssertion(input);
         theTrans.setParameter(parameters);

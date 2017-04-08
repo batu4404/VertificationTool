@@ -16,8 +16,18 @@ import core.solver.SMTTypeConvertion;
 import core.utils.Printer;
 import core.utils.Variable;
 import core.utils.VariableManager;
+import spoon.reflect.CtModel;
+import spoon.reflect.code.CtDo;
+import spoon.reflect.code.CtFor;
+import spoon.reflect.code.CtWhile;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.visitor.filter.TypeFilter;
 
+/**
+ * @author lenovo
+ *
+ */
 public class VtCFG {
 	BeginMethod begin;
 	EndMethod end;
@@ -28,9 +38,17 @@ public class VtCFG {
 	List<Variable> parameters; // danh sách tên các tham sô + return (nếu hàm có trả về giá trị)
 	String returnType;	// phương thức có trả về giá trị hay là kiểu void
 	
+	boolean hasLoop;
+	
 	public VtCFG() {
 		begin = new BeginMethod();
 		end = new EndMethod();
+	}
+	
+	public VtCFG(CtMethod method) {
+		this();
+		
+		this.method = method;
 	}
 	
 	public BeginMethod getBegin() {
@@ -46,6 +64,9 @@ public class VtCFG {
 		return this;
 	}
 	
+	public boolean hasLoop() {
+		return hasLoop;
+	}
 	
 	
 	/**
@@ -217,5 +238,27 @@ public class VtCFG {
 		}
 		
 		return listFormula;
+	}
+	
+	public void checkLoop() {
+		 List<CtElement> temp;
+		 
+		 temp = method.getElements(new TypeFilter(CtFor.class));
+		 if (temp != null && temp.size() != 0) {
+			 hasLoop = true;
+			 return;
+		 }
+		 
+		 temp = method.getElements(new TypeFilter(CtWhile.class));
+		 if (temp != null && temp.size() != 0) {
+			 hasLoop = true;
+			 return;
+		 }
+		 
+		 temp = method.getElements(new TypeFilter(CtDo.class));
+		 if (temp != null && temp.size() != 0) {
+			 hasLoop = true;
+			 return;
+		 }
 	}
 }

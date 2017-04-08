@@ -94,12 +94,12 @@ public class Core {
 		}
 	}
 	
-	public List<String> runSolver(String methodSignature, 
+	public List<String> runSolver(int indexOfMethod, 
 			String userAssertion, String preCondition) throws Exception {
 
-		int index = find(methodSignatures, methodSignature);
+	//	int index = find(methodSignatures, methodSignature);
 		
-		VtCFG mf = methodCFGList.get(index);
+		VtCFG mf = methodCFGList.get(indexOfMethod);
 		
 		// Sinh file meta
 		PrintStream printStream;
@@ -126,15 +126,7 @@ public class Core {
 		smtInput.setListVariables(mf.getVariableManager().getListVariables());
 		
 		String constraintTemp;
-//		for(int i = 0; i < conditions.size(); i++) {
-//			for (Variable v: mf.getParameters()) {
-//				System.err.println("p: " + v.getName());
-//			}
-//			constraintTemp = userAssertionFactory.setParameter(mf.getParameters())
-//								.createUserAssertion(conditions.get(i));
-//			constraintTemp = "(not " + constraintTemp + ")";
-//			conditions.set(i, constraintTemp);
-//		}
+
 		List<String> constraints = new ArrayList<>();
 		
 		userAssertionFactory.setParameter(mf.getParameters());
@@ -156,22 +148,20 @@ public class Core {
 	    List<String> result1 = new ArrayList<String>();
 	    List<Variable> parameters = mf.getParameters();
 	    result1.add(result.get(0));
+	    
+	    if (result.get(0).equals("unsat")) {
+		    if (mf.hasLoop()) {
+		    	result1.add("bounded");
+		    }
+	    }
+	    
 	    for (Variable v: parameters) {
 	    	String varName = v.getName() + "_0"; 
 	    	for (int i = 1; i < result.size(); i++) {
 	   
 	    		if (result.get(i).indexOf(varName) >= 0) {
 	    			String valueLine = result.get(i+1);
-	//    			System.out.println("value: " + valueLine);
-	//    			System.out.println("indexof(\"(\"): " + valueLine.indexOf("("));
-//	    			valueLine = valueLine.replace('(', ' ');
-//	    			valueLine = valueLine.replace(')', ' ');
-//	    			valueLine = valueLine.trim();
-//	    			
-//	    			
-//	    			
-//	    			valueLine = valueLine.replace(" ", "");
-	    			
+
 	    			valueLine = getValue(valueLine);
 	    			
 	//    			System.out.println("value: " + valueLine);

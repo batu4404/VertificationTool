@@ -96,7 +96,6 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 
 		
 		//file browser
-
         fileRoot = new File("/");
         root = new DefaultMutableTreeNode(new FileNode(fileRoot));
         treeModel = new DefaultTreeModel(root);
@@ -131,8 +130,7 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 									
 							try {
 								loadSourceCode();
-								// ư
-								
+							
 								core = new Core(file.getAbsolutePath());
 								core.setLoop(loop);
 								core.create();
@@ -153,14 +151,6 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 			}
 		});
         
-//        CreateChildNodes ccn = 
-//                new CreateChildNodes(fileRoot, root);
-//        new Thread(ccn).start();
-//		
-//		JScrollPane listScrollPane = new JScrollPane(list);		
-//	
-
-
 		
 		JPanel constraintPanel = createContraintsPanel();
 		
@@ -193,7 +183,6 @@ public class MainPanelWithSourceCodeHL extends JPanel {
         
 		add(splitpane2, BorderLayout.CENTER);
 		
-   
        
         UIManager.LookAndFeelInfo[] infos = UIManager.getInstalledLookAndFeels();
         for (UIManager.LookAndFeelInfo lak: infos) {
@@ -344,30 +333,21 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 		metaSMT = new JTextArea();
 	//	metaSMT.setEditable(false);
 		
-		
 		JTabbedPane tabbedpane = new JTabbedPane();
 		
 		try {
-		//	Font font = UIManager.getDefaults().getFont("TabbedPane.font");
-        //    font = font.deriveFont(16f);
-		//	UIManager.getDefaults().put("TabbedPane.font", new FontUIResource(font));
+		
 			Font font = new Font("Arial", Font.PLAIN, 14);
 			UIManager.getDefaults().put("TabbedPane.font", new FontUIResource(font));
         }
         catch(Exception e) {
             e.printStackTrace();
         }
-	//	JLabel title = new JLabel("Log");
-	//	panel.add(title, BorderLayout.PAGE_START);
-		
-	//	title.setFont(new Font("Arial", Font.PLAIN, 14));
-	//	JScrollPane spResult = new JScrollPane(resultTA);
-		tabbedpane.add("Report", new JScrollPane(resultTA));
 
+		tabbedpane.add("Report", new JScrollPane(resultTA));
 		tabbedpane.add("SMT input", new JScrollPane(smtInput));
 		tabbedpane.add("Solver log", new JScrollPane(smtLog));
 		tabbedpane.add("MetaSMT", new JScrollPane(metaSMT));
-		
 		
 		panel.add(tabbedpane, BorderLayout.CENTER);
 
@@ -520,7 +500,6 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 			System.out.println("loop: " + loop);
 		}
 		
-		
 		String precondition = preconditionTA.getText();
 		String userAssertion = userAssertionTA.getText();
 		
@@ -536,31 +515,44 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 		}
 		try {
 			resultTA.setText("");
+			smtInput.setText("");
+			smtLog.setText("");
 			
-			List<String> outputList = core.runSolver(methodSignatures[index], userAssertion, precondition);
+			List<String> outputList = core.runSolver(index, userAssertion, precondition);
 			List<String> solverLog = core.getSolverLog();
 			
 			String state = outputList.get(0);
 			System.out.println("state: " + state);
-			if (precondition.equals("")) {
-				if (state.equals("unsat"))
-					resultTA.setText(SAT_LOG);
-				else if (state.equals("unknown"))
+			if (precondition.equals("")) {	// has not precondition	
+				if (state.equals("unsat")) {
+					resultTA.setText(ALWAYS_TRUE_REPORT);
+					if (outputList.size() == 2) {
+						resultTA.append("\nand bound is " + loop);
+					}
+				}
+				else if (state.equals("unknown")) {
+					
 					resultTA.setText("Unknown");
+				}
 				else {
-					resultTA.append(UNSAT_LOG + "\n");
+					resultTA.append(NOT_ALWAYS_TRUE_REPORT + "\n");
 					for (int i = 1; i < outputList.size(); i++) {
 						resultTA.append(outputList.get(i) + "\n");
 					}
 				}
 			}
-			else {
-				if (state.equals("unsat"))
-					resultTA.setText(SAT_LOG_WITH_PRECONDITION);
-				else if (state.equals("unknown"))
+			else {		//  has precondition
+				if (state.equals("unsat")) {
+					resultTA.setText(ALWAYS_TRUE_REPORT_WITH_PRECONDITION);
+					if (outputList.size() == 2) {
+						resultTA.append("\nand bound is " + loop);
+					}
+				}
+				else if (state.equals("unknown")) {
 					resultTA.setText("Unknown");
+				}
 				else {
-					resultTA.append(UNSAT_LOG_WITH_PRECONDITION + "\n");
+					resultTA.append(NOT_ALWAYS_TRUE_REPORT_WITH_PRECONDITION + "\n");
 					for (int i = 1; i < outputList.size(); i++) {
 						resultTA.append(outputList.get(i) + "\n");
 					}
@@ -780,8 +772,8 @@ public class MainPanelWithSourceCodeHL extends JPanel {
 	
 	int loop = 3;
 	
-	static String SAT_LOG = "YES, User's assertion is always true.";
-	static String UNSAT_LOG = "<em>NO</em>, User's assertion is not always true, by a counter example: ";
-	static String SAT_LOG_WITH_PRECONDITION = "YES, User's assertion is always true with pre-condition.";
-	static String UNSAT_LOG_WITH_PRECONDITION = "<em>NO</em>, User's assertion is not always true with precondition, by a counter example: ";
+	static String ALWAYS_TRUE_REPORT = "YES, User's assertion is always true";
+	static String NOT_ALWAYS_TRUE_REPORT = "NO, User's assertion is not always true, by a counter example: ";
+	static String ALWAYS_TRUE_REPORT_WITH_PRECONDITION = "YES, User's assertion is always true with pre-condition";
+	static String NOT_ALWAYS_TRUE_REPORT_WITH_PRECONDITION = "NO, User's assertion is not always true with precondition, by a counter example: ";
 }

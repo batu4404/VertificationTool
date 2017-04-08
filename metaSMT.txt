@@ -1,32 +1,32 @@
 
-fac_0 = 1
-i_0 = 1
+sum_0 = 0
+i_0 = 0
 if ( i_0 <= n_0 ) {
-    fac_1 = fac_0 * i_0
+    sum_1 = sum_0 + i_0
     i_1 = i_0 + 1
     if ( i_1 <= n_0 ) {
-        fac_2 = fac_1 * i_1
+        sum_2 = sum_1 + i_1
         i_2 = i_1 + 1
         if ( i_2 <= n_0 ) {
-            fac_3 = fac_2 * i_2
+            sum_3 = sum_2 + i_2
             i_3 = i_2 + 1
         }
         else {
             
-            fac_3 = fac_2
+            sum_3 = sum_2
             i_3 = i_2
         }
     }
     else {
         
-        fac_3 = fac_1
+        sum_3 = sum_1
         i_3 = i_1
     }
 }
 else {
     
-    fac_3 = fac_0
+    sum_3 = sum_0
     i_3 = i_0
 }
 
-return = fac_3
+return = sum_3

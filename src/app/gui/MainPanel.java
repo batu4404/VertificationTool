@@ -513,7 +513,7 @@ public class MainPanel extends JPanel {
 		try {
 			resultTA.setText("");
 			
-			List<String> outputList = core.runSolver(methodSignatures[index], postcondition, precondition);
+			List<String> outputList = core.runSolver(index, postcondition, precondition);
 			List<String> solverLog = core.getSolverLog();
 			
 			String state = outputList.get(0);

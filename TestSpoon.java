@@ -2,10 +2,10 @@
 public class TestSpoon
 {
 	
-	public static int factorial(int n) {
+	public int factorial(int n) {
 		int fac = 1;
 		
-		for (int i = 1; i <= n; i++) {
+		for (int i = 2; i <= n; i++) {
 			fac = fac * i;
 		}
 		

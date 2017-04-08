@@ -80,7 +80,7 @@ public class CFGBuilder {
 		CtBlock body = method.getBody();
 		PairNode preCFG = generateCFG(body);
 		
-		VtCFG cfg = new VtCFG();
+		VtCFG cfg = new VtCFG(method);
 		cfg.setPreCFG(preCFG);
 		
 		VariableManager vm = buildVariableManager();
@@ -95,6 +95,8 @@ public class CFGBuilder {
 		}
 		
 		cfg.setParameters(parameters);
+		
+		cfg.checkLoop();
 		
 		return cfg;
 	}
