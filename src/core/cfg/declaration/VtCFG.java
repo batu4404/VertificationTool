@@ -219,6 +219,10 @@ public class VtCFG {
 		}
 	}
 	
+	/**
+	 * print meta to printStream
+	 * @param printStream
+	 */
 	public void printMetaSMT(PrintStream printStream) {
 		Printer.printMeta(printStream, begin, end, "");
 	}

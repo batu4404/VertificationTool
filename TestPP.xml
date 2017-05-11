@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<AssertionFile>
+	<AssertionMethod>
+	    <Method>Test</Method>
+	    <PreCondition>a > b</PreCondition>
+	    <PostCondition>return = b</PostCondition>
+	</AssertionMethod> 
+	
+	<AssertionMethod>
+	    <Method>Test</Method>
+	    <PreCondition>a > b</PreCondition>
+	    <PostCondition>(return >= 1.)()</PostCondition>
+	</AssertionMethod> 
+	
+	<AssertionMethod>
+	    <Method>Test2</Method>
+	    <PreCondition>a > b</PreCondition>
+	    <PostCondition>return = b</PostCondition>
+	</AssertionMethod>   
+	
+	<AssertionMethod>
+	    <Method>Test3</Method>
+	    <PreCondition>a > b</PreCondition>
+	    <PostCondition>return = b</PostCondition>
+	</AssertionMethod>   
+	
+</AssertionFile>

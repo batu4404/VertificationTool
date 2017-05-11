@@ -16,7 +16,7 @@ import core.cfg.declaration.node.LinearNode;
 import core.cfg.declaration.node.PairNode;
 import core.cfg.declaration.node.ReturnNode;
 import core.cfg.declaration.node.SyncNode;
-import core.utils.LauncherSpoon;
+import core.spoon.LauncherSpoon;
 import core.utils.Printer;
 import core.utils.Variable;
 import core.utils.VariableManager;

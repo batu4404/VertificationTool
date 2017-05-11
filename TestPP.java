@@ -1,5 +1,5 @@
 
-public class TestSpoon
+public class TestPP
 {
 	
 	public float f(float x)

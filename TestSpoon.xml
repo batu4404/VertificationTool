@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<AssertionFile>
+	<AssertionMethod>
+	    <Method>f</Method>
+	    <PreCondition>(x + 1.2 > 0) && (x < 1.2)</PreCondition>
+	    <PostCondition>return >= 0.1</PostCondition>
+	</AssertionMethod> 
+</AssertionFile>

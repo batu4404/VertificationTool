@@ -1,4 +1,4 @@
-package core.utils;
+package core.spoon;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class LauncherSpoon {
 		modelBuilder.addInputSource(resource);
 	}
 	
-	private void addInputResource(File resource) {
+	public void addInputResource(File resource) {
 		modelBuilder.addInputSource(resource);
 	}
 	

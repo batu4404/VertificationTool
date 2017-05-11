@@ -1,4 +1,4 @@
-package app;
+package core.verification.userassertion;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,21 +8,21 @@ import core.utils.Helper;
 import core.utils.InfixToPrefix;
 import core.utils.Variable;
 
-public class UserAssertion {
+public class UserInput {
 	String input;
 	String assertion;
 	List<Variable> parameters;
 	String[] mathElements;
 	
-	public UserAssertion() {
+	public UserInput() {
 		
 	}
 	
-	public UserAssertion(String input) {
+	public UserInput(String input) {
 		this.input = input;
 	}
 	
-	public UserAssertion setInput(String input) {
+	public UserInput setInput(String input) {
 		this.input = input;
 		return this;
 	}
@@ -37,6 +37,10 @@ public class UserAssertion {
 		
 		mathElements = prefix.split(" ");
 		
+		for (String str: mathElements) {
+			System.out.println("str: " + str);
+		}
+		
 		addParenthesis();
 		
 		addIndexForParameter();
@@ -47,7 +51,7 @@ public class UserAssertion {
 	}
 
 	
-	public UserAssertion setParameter(List<Variable> parameters) {
+	public UserInput setParameter(List<Variable> parameters) {
 		this.parameters = parameters;
 		return this;
 	}
@@ -88,6 +92,7 @@ public class UserAssertion {
 	private void preProcess() {
 	
 		input = input.replaceAll(" ", "")
+					.replace("==", "=")
 					.replaceAll(">=", "@")
 					.replaceAll("<=", "~")
 					.replaceAll("&&", "&")
@@ -98,7 +103,7 @@ public class UserAssertion {
 	
 	/**
 	 * xử lý input sau khi chuyển đổi (trả lại tên cho em)
-	 * thay thế lại các phép toán đã được thay thê trong preProcess
+	 * thay thế lại các phép toán đã được thay thế trong preProcess
 	 */
 	private void postReplace() {
 		assertion = assertion.replaceAll("@", ">=")
@@ -175,6 +180,10 @@ public class UserAssertion {
     //    input = "return * return > (a+b)/2";
         input = "a != b";
         
+        input = "-a * b";
+        
+        input = "!(a < b)";
+        
         List<Variable> parameters = new ArrayList<>();
         parameters.add(new Variable("double", "return"));
         parameters.add(new Variable("double", "a"));
@@ -186,10 +195,10 @@ public class UserAssertion {
         else {
         	System.out.println("not contain <= ");
         }	
-     //   input = input.replaceAll("\\^", "&");
+   
         System.out.println("input: " + input);
         String output;
-        UserAssertion theTrans = new UserAssertion(input);
+        UserInput theTrans = new UserInput(input);
         theTrans.setParameter(parameters);
         output = theTrans.createUserAssertion(input); 
         System.out.println("prefix is " + output + '\n');

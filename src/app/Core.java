@@ -7,36 +7,22 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.SpringLayout.Constraints;
-
 import core.cfg.cfgbuilder.CFGBuilder;
 import core.cfg.declaration.VtCFG;
 import core.solver.SMTInput;
 import core.solver.Z3Runner;
-import core.utils.LauncherSpoon;
+import core.spoon.LauncherSpoon;
 import core.utils.PrefixToInfix;
 import core.utils.Variable;
+import core.verification.userassertion.UserInput;
 import spoon.compiler.ModelBuildingException;
-import spoon.compiler.SpoonCompiler;
-import spoon.compiler.SpoonResource;
-import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtType;
-import spoon.reflect.factory.Factory;
-import spoon.reflect.factory.FactoryImpl;
-import spoon.reflect.visitor.Filter;
-import spoon.reflect.visitor.filter.TypeFilter;
-import spoon.support.DefaultCoreFactory;
-import spoon.support.StandardEnvironment;
-import spoon.support.compiler.FileSystemFile;
-import spoon.support.compiler.FileSystemFolder;
-import spoon.support.compiler.jdt.JDTBasedSpoonCompiler;
 
 public class Core {
 	public Core() {
 		smtInput = new SMTInput();
 		cfgBuilder = new CFGBuilder();
-		userAssertionFactory = new UserAssertion();
+		userAssertionFactory = new UserInput();
 	}
 	
 	public Core(String pathFile)
@@ -145,7 +131,12 @@ public class Core {
 	    result = Z3Runner.runZ3(fileDir);
 	    result.forEach(System.out::println);
 	    
-	    List<String> result1 = new ArrayList<String>();
+	    return analyseSolverResult(mf);
+	}
+	
+	public List<String> analyseSolverResult(VtCFG mf) {
+		
+		List<String> result1 = new ArrayList<String>();
 	    List<Variable> parameters = mf.getParameters();
 	    result1.add(result.get(0));
 	    
@@ -163,8 +154,7 @@ public class Core {
 	    			String valueLine = result.get(i+1);
 
 	    			valueLine = getValue(valueLine);
-	    			
-	//    			System.out.println("value: " + valueLine);
+
 	    			result1.add(v.getName() + " = " + valueLine);
 	    			break;
 	    		}
@@ -175,12 +165,6 @@ public class Core {
 	 	   
     		if (result.get(i).indexOf("return") >= 0) {
     			String valueLine = result.get(i+1);
-//    			System.out.println("value: " + valueLine);
-//    			System.out.println("indexof(\"(\"): " + valueLine.indexOf("("));
-//    			valueLine = valueLine.replace('(', ' ');
-//    			valueLine = valueLine.replace(')', ' ');
-//    			valueLine = valueLine.replace(" ", "");
-//    			System.out.println("value: " + valueLine);
     			
     			valueLine = getValue(valueLine);
     			result1.add("return = " + valueLine);
@@ -190,7 +174,6 @@ public class Core {
 	    
 	    return result1;
 	}
-
 	
 	public List<String> getSolverLog() {
 		return result;
@@ -228,7 +211,7 @@ public class Core {
 	private String[] methodSignatures;
 	int[] lineNumberOfMethods;
 	
-	private UserAssertion userAssertionFactory;
+	private UserInput userAssertionFactory;
 	
 	List<String> result;
 	

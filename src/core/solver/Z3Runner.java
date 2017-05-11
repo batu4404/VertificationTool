@@ -11,7 +11,7 @@ public class Z3Runner {
 			throws IOException {
 		List<String> result = new ArrayList<String>();
 		String pathToZ3 = "z3\\bin\\z3.exe";
-		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", pathToZ3 + " -smt2 " + filename);
+		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", pathToZ3 + " -smt2 -st -T:900 " + filename);
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));

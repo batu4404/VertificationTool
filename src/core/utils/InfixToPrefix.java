@@ -58,35 +58,16 @@ public class InfixToPrefix {
             	}
 				prefix += " " + operand;
 				i--;
-				System.out.println("operand: " + ch);
 			} 
 			else {
 				if (ch == ')') {
-					System.out.println("hello wro");
 					stack.push(ch);
-					System.out.println("prefix: " + prefix);
-					if (stack.isEmpty()) {
-						System.out.println("stack is emptyyyyyyyyyy");
-					}
 				} 
 				else if(ch == '(') {
-					System.out.println("size: " + stack.size());
-					if (stack.isEmpty()) {
-						System.out.println("stack is empty");
-					}
 					while (stack.peek() != ')') {
-						System.err.println("stack peek: " + stack.peek());
-						System.err.println("prefix: " + prefix);
-						if (stack.peek() == ')') {
-							System.out.println("bang rooi");
-						}
 						prefix += " " + stack.pop();
 					}
 					
-					if (stack.peek() == ')') {
-						System.out.println("bang ro00000000000oi");
-						System.out.println("prefix: " + prefix);
-					}
 					stack.pop();
 				} 
 				else {
@@ -94,14 +75,10 @@ public class InfixToPrefix {
 						stack.push(ch);
 					}
 					else if (priority(stack.peek()) <= priority(ch)) {
-						System.out.println("ch: " + ch);
 						stack.push(ch);
 					} 
 					else {
 						while(!stack.isEmpty() && priority(stack.peek()) >= priority(ch)) {
-							if (stack.peek() == ')') {
-								System.out.println("bangggggg rooi");
-							}
 							prefix += " " + stack.pop();
 						}
 						stack.push(ch);

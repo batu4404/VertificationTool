@@ -1,0 +1,7 @@
+(declare-fun x_0 () Real)
+(declare-fun return () Real)
+(assert (= return (+ (+ (- x_0 (/ (* (* x_0 x_0) x_0) 6)) (/ (* (* (* (* x_0 x_0) x_0) x_0) x_0) 120)) (/ (* (* (* (* (* (* x_0 x_0) x_0) x_0) x_0) x_0) x_0) 5040))))
+(assert (and (> (+ x_0 1.2) 0) (< x_0 1.2)))
+(assert (not (>= return 0.1)))
+(check-sat)
+(get-model)

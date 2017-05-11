@@ -66,10 +66,10 @@ public class PrefixToInfix {
 				}
 				else {
 					if (stack.size() >= 2) {
-						temp = stack.pop() + s + stack.pop();
+						temp = stack.pop() + " " + s + " " + stack.pop();
 					}
 					else {
-						temp = s+stack.pop();
+						temp = s + " " + stack.pop();
 					}
 					
 					stack.push(temp);
@@ -81,7 +81,7 @@ public class PrefixToInfix {
 	}
 	
 	public static void main(String[] args) {
-		String prefix = "- / 4.0 15.0";
+		String prefix = "- / 437498374983748378473874837483784738478374837847384444444444444444444 15.0";
 		
 		String infix = PrefixToInfix.prefixToInfix(prefix);
 		
