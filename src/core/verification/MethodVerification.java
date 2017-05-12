@@ -10,6 +10,7 @@ import core.cfg.cfgbuilder.CFGBuilder;
 import core.cfg.declaration.VtCFG;
 import core.solver.Report;
 import core.solver.SMTInput;
+import core.solver.VerificationReport;
 import core.solver.Z3Runner;
 import core.verification.userassertion.UserInput;
 import spoon.reflect.declaration.CtMethod;
