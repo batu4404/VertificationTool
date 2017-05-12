@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<AssertionFile>
+	<AssertionMethod>
+	    <Method>sqr</Method>
+	    <PostCondition>return > 0</PostCondition>
+	</AssertionMethod> 
+	
+</AssertionFile>

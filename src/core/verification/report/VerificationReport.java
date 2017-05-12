@@ -14,13 +14,59 @@ public class VerificationReport {
 	public static final String TIMEOUT = "timeout";
 	public static final String UNKNOWN = "unknown";
 	
+	private String methodName;
+	private String preCondition;
+	private String postCondition;
 	private String status;
 	private List<DefineFun> parameters;
 	private DefineFun ret;	// return
 	private List<String> errors;
-	private float solverTime;
-	private float generateConstraintTime;
+	private int solverTime;
+	private int generateConstraintTime;
 	
+	
+	/**
+	 * @return the methodName
+	 */
+	public String getMethodName() {
+		return methodName;
+	}
+
+	/**
+	 * @param methodName the methodName to set
+	 */
+	public void setMethodName(String methodName) {
+		this.methodName = methodName;
+	}
+
+	/**
+	 * @return the preCondition
+	 */
+	public String getPreCondition() {
+		return preCondition;
+	}
+
+	/**
+	 * @param preCondition the preCondition to set
+	 */
+	public void setPreCondition(String preCondition) {
+		this.preCondition = preCondition;
+	}
+
+	/**
+	 * @return the postCondition
+	 */
+	public String getPostCondition() {
+		return postCondition;
+	}
+
+	/**
+	 * @param postCondition the postCondition to set
+	 */
+	public void setPostCondition(String postCondition) {
+		this.postCondition = postCondition;
+	}
+
 	public boolean isAlwaysTrue() {
 		return ALWAYS_TRUE.equalsIgnoreCase(status);
 	}
@@ -62,14 +108,14 @@ public class VerificationReport {
 	/**
 	 * @return the solverTime
 	 */
-	public float getSolverTime() {
+	public int getSolverTime() {
 		return solverTime;
 	}
 	
 	/**
 	 * @param solverTime the solverTime to set
 	 */
-	public void setSolverTime(float solverTime) {
+	public void setSolverTime(int solverTime) {
 		this.solverTime = solverTime;
 	}
 	
@@ -105,14 +151,14 @@ public class VerificationReport {
 	/**
 	 * @return the generateConstraintTime
 	 */
-	public float getGenerateConstraintTime() {
+	public int getGenerateConstraintTime() {
 		return generateConstraintTime;
 	}
 
 	/**
 	 * @param generateConstraintTime the generateConstraintTime to set
 	 */
-	public void setGenerateConstraintTime(float generateConstraintTime) {
+	public void setGenerateConstraintTime(int generateConstraintTime) {
 		this.generateConstraintTime = generateConstraintTime;
 	}
 
@@ -131,9 +177,9 @@ public class VerificationReport {
 		}
 		
 		if (ret != null) {
-			System.out.println("return: " + ret);
+			System.out.println(ret.getExpression());
 		}
-		
+		System.out.println("constraint time: " + generateConstraintTime);
 		System.out.println("solver time: " + solverTime);
 	}
 }

@@ -4,18 +4,45 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import core.utils.PrefixToInfix;
+import core.utils.Variable;
+
 public class Report {
+	
+	private List<Variable> listParameter;
+	private VerificationReport report;
+	private List<String> result; // result of running solver
+	
+	/**
+	 * @return the listParameter
+	 */
+	public List<Variable> getListParameter() {
+		return listParameter;
+	}
+
+	/**
+	 * @param listParameter the listParameter to set
+	 */
+	public void setListParameter(List<Variable> listParameter) {
+		this.listParameter = listParameter;
+	}
+
 	public VerificationReport generateReport(List<String> result) {
-		Iterator<String> iter = result.iterator();
+		
+		this.result = result;
+		report = new VerificationReport();
+	
 		List<String> listError = new ArrayList<>();
 		
 		String str;
 		String status = null;
-		float time = 0;
+		int time = 0;
 		String model = "";
 		
-		while (iter.hasNext()) {
-			str = iter.next();
+		int i = 0;
+		int n = result.size();
+		while (i < n) {
+			str = result.get(i);
 			
 			if (!str.contains("(") && !str.contains(")") && status == null) {
 				status = str;
@@ -24,33 +51,94 @@ public class Report {
 				listError.add(parseError(str));
 			}
 			else if (str.contains("(model")) {
-				while (iter.hasNext()) {
-					str = iter.next();
+				i++;
+				int begin = i;
+				int end = 0;
+				while (i < n) {
+					str = result.get(i);
+					
 					if ( str.equals(")") ) {
+						end = i - 1;
 						break;
 					}
 					else {
-						model += str;
+						i++;
 					}
 				}
+				
+				parseModel(begin, end);
 			}
 			else if (str.contains(":total-time")) {
 				String[] temp = str.split("[ ]+|[)]");
-				time = Float.parseFloat(temp[temp.length-1]);
+				time = (int) (Float.parseFloat(temp[temp.length-1]) * 1000);
 			}
+			
+			i++;
 		}
 		
-		VerificationReport report = new VerificationReport();
 		report.setErrors(listError);
 		report.setStatus(status);
 		report.setSolverTime(time);
 		
-		List<DefineFun> parameters = new ArrayList<>();
-		parameters.add(new DefineFun("x", "int", "1"));
-		report.setParameters(parameters);
-		report.setReturn(new DefineFun("return", "int", "1"));
-		
 		return report;
+	}
+	
+	private void parseModel(int begin, int end) {
+		if (listParameter == null)
+			return;
+		
+		List<DefineFun> paramtersDefineFun = new ArrayList<>();
+		int i;
+		for (Variable v: listParameter) {
+	    	String varName = v.getName() + "_0"; 
+	    	
+	    	i = begin;
+	    	while (i <= end) {
+	   
+	    		if (result.get(i).indexOf(varName) >= 0) {
+	    			String valueStr = "";
+	    			i++;
+	    			while (i <= end && !result.get(i).contains("define-fun")) {
+	    				valueStr += result.get(i);
+	    				i++;
+	    			}
+	    			
+	    			String value = getValue(valueStr);
+	    			paramtersDefineFun.add(new DefineFun(v.getName(), v.getType(), value));
+	    			break;
+	    		}
+	
+	    		i++;
+	    	}
+	    }
+		report.setParameters(paramtersDefineFun);
+		
+	    i = begin;
+    	while (i <= end) {
+    		if (result.get(i).indexOf("return") >= 0) {
+    			String valueStr = "";
+    			i++;
+    			while (i <= end && !result.get(i).contains("define-fun")) {
+    				valueStr += result.get(i);
+    				i++;
+    			}
+    			String value = getValue(valueStr);
+    			
+    			report.setReturn(new DefineFun("return", value));
+    			break;
+    		}
+    		i++;
+    	}
+	}
+	
+	private String getValue(String valueStr) {
+		valueStr = valueStr.replace('(', ' ')
+							.replace(')', ' ')
+							.trim();
+		
+		String value = PrefixToInfix.prefixToInfix(valueStr);
+		
+		return value;
 	}
 	
 	public static String parseError(String error) {
@@ -114,7 +202,11 @@ public class Report {
 		list.add(" :time               0.01");
 		list.add(" :total-time         0.01)");
 		
+		List<Variable> listParameter = new ArrayList<>();
+		listParameter.add(new Variable("real", "IN"));
+		
 		Report report = new Report();
+		report.setListParameter(listParameter);
 		VerificationReport verificationReport= report.generateReport(list);
 		verificationReport.print();
 	}

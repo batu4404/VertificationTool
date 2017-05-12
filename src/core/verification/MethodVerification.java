@@ -44,6 +44,8 @@ public class MethodVerification {
 	public VerificationReport verify(CtMethod method, String preCondition, String postCondition) 
 			throws IOException {
 		
+		long begin = System.currentTimeMillis();
+		
 		CFGBuilder builder = new CFGBuilder();
 		VtCFG cfg = builder.setNumberOfLoop(nLoops).buildCFG(method);
 		cfg.index();
@@ -59,7 +61,7 @@ public class MethodVerification {
 		userInput.setParameter(cfg.getParameters());
 		
 		// add pre-condition
-		if (!preCondition.equals("")) {
+		if (preCondition != null && !preCondition.equals("")) {
 			constraintTemp = userInput.createUserAssertion(preCondition);
 			constraints.add(constraintTemp);
 		}
@@ -71,6 +73,8 @@ public class MethodVerification {
 		
 		smtInput.setConstraints(constraints);
 		
+		long end = System.currentTimeMillis();
+		
 		String methodName = method.getSimpleName();
 		String path = SMTINPUT_DIR + methodName + ".smt";
 		FileOutputStream fo = new FileOutputStream(new File(path));
@@ -80,9 +84,10 @@ public class MethodVerification {
 	    
 	    result.forEach(System.out::println);
 	    Report report = new Report();
+	    report.setListParameter(cfg.getParameters());
 	    VerificationReport verReport = report.generateReport(result);
-	    System.out.println("status: " + verReport.getStatus());
-	    System.out.println("time: " + verReport.getSolverTime());
+	    
+	    verReport.setGenerateConstraintTime((int)(end-begin));
 		
 		return verReport;
 	}

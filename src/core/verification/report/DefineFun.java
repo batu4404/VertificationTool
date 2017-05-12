@@ -9,6 +9,11 @@ public class DefineFun {
 		
 	}
 	
+	public DefineFun(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
+	
 	public DefineFun(String name, String type, String value) {
 		this.name = name;
 		this.type = type;
