@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import core.solver.DefineFun;
+import core.verification.report.DefineFun;
+
 
 public class TestSmtInput {
 	public static void main(String[] args) {
@@ -177,7 +178,7 @@ public class TestSmtInput {
 		return listStr;
 	}
 	
-	static DefineFun parseDefineFun(String define) {
+	public static DefineFun parseDefineFun(String define) {
 
 		List<String> list = new ArrayList<>();
 		

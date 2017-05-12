@@ -1,4 +1,4 @@
-package core.solver;
+package core.verification.report;
 
 import java.util.List;
 
@@ -91,14 +91,14 @@ public class VerificationReport {
 	/**
 	 * @return the ret
 	 */
-	public DefineFun getRet() {
+	public DefineFun getReturn() {
 		return ret;
 	}
 
 	/**
 	 * @param ret the ret to set
 	 */
-	public void setRet(DefineFun ret) {
+	public void setReturn(DefineFun ret) {
 		this.ret = ret;
 	}
 
@@ -122,6 +122,16 @@ public class VerificationReport {
 			for (String err: errors) {
 				System.out.println("error: " + err);
 			}
+		}
+		
+		if (parameters != null) {
+			for (DefineFun param: parameters) {
+				System.out.println("parameter: " + param);
+			}
+		}
+		
+		if (ret != null) {
+			System.out.println("return: " + ret);
 		}
 		
 		System.out.println("solver time: " + solverTime);

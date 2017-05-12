@@ -1,4 +1,4 @@
-package core.solver;
+package core.verification.report;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,6 +45,11 @@ public class Report {
 		report.setStatus(status);
 		report.setSolverTime(time);
 		
+		List<DefineFun> parameters = new ArrayList<>();
+		parameters.add(new DefineFun("x", "int", "1"));
+		report.setParameters(parameters);
+		report.setReturn(new DefineFun("return", "int", "1"));
+		
 		return report;
 	}
 	
@@ -53,6 +58,36 @@ public class Report {
 		int end = error.lastIndexOf("\"");
 		
 		return error.substring(begin, end);
+	}
+	
+	public static VerificationReport getToTest() {
+		List<String> list = new ArrayList<>();
+		list.add("(error \"line 11 column 21: unknown constant IN\")");
+		list.add("(error \"line 11 column 22: unknown constant IN\")");  
+		list.add("sat");
+		list.add("(model");
+		list.add("  (define-fun IN_0 () Real");
+		list.add("    (- (/ 3.0 2.0)))");
+		list.add("  (define-fun return () Real");
+		list.add("    (- (/ 71979.0 71680.0)))");
+		list.add("  (define-fun result_0 () Real");
+		list.add("    (- (/ 71979.0 71680.0)))");
+		list.add("  (define-fun x_0 () Real");
+		list.add("    (- (/ 3.0 2.0)))");
+		list.add(")");
+		list.add("(:eliminated-vars    3");
+		list.add(" :memory             2.70");
+		list.add(" :nlsat-decisions    1");
+		list.add(" :nlsat-propagations 3");
+		list.add(" :nlsat-stages       2");
+		list.add(" :time               0.01");
+		list.add(" :total-time         0.01)");
+		
+		Report report = new Report();
+		VerificationReport verificationReport= report.generateReport(list);
+		verificationReport.print();
+		
+		return verificationReport;
 	}
 	
 	public static void main(String[] args) {

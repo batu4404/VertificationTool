@@ -8,10 +8,10 @@ import java.util.List;
 
 import core.cfg.cfgbuilder.CFGBuilder;
 import core.cfg.declaration.VtCFG;
-import core.solver.Report;
 import core.solver.SMTInput;
-import core.solver.VerificationReport;
 import core.solver.Z3Runner;
+import core.verification.report.Report;
+import core.verification.report.VerificationReport;
 import core.verification.userassertion.UserInput;
 import spoon.reflect.declaration.CtMethod;
 

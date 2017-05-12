@@ -1,4 +1,4 @@
-package core.solver;
+package core.verification.report;
 
 public class DefineFun {
 	private String name;
@@ -56,6 +56,10 @@ public class DefineFun {
 	 */
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getExpression() {
+		return name + " = " + value;
 	}
 	
 	@Override
