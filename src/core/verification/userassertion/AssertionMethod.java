@@ -24,12 +24,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.microsoft.z3.Context;
-import com.microsoft.z3.FuncDecl;
-import com.microsoft.z3.Model;
-import com.microsoft.z3.Solver;
-import com.microsoft.z3.Z3Exception;
-
 import core.solver.Z3Runner;
 
 public class AssertionMethod {

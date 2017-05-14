@@ -21,14 +21,13 @@ public class FileVerification {
 	}
 	
 	public void verifyDirectory(File directory) {
-		System.out.println("directory: " + directory);
 		
 		if (directory == null) {
 			return;
 		}
 		else if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
-			System.out.println("size: " + files.length);
+			
 			for (File f: files) {
 				verifyDirectory(f);
 			}
@@ -82,6 +81,7 @@ public class FileVerification {
 			for (CtMethod method: listMethod) {
 				if (method.getSimpleName().equals(am.getMethodName())) {
 					try {
+						
 						report = mv.verify(method, am.getPreCondition(), am.getPostCondition());
 						
 						report.print();
