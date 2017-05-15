@@ -9,8 +9,8 @@ public class VerificationReport {
 //	public static final int TIMEOUT = 2;
 //	public static final int UNKNOWN = 3;
 	
-	public static final String NOT_ALWAYS_TRUE = "always true";
-	public static final String ALWAYS_TRUE = "not always true";
+	public static final String NOT_ALWAYS_TRUE = "not always true";
+	public static final String ALWAYS_TRUE = "always true";
 	public static final String TIMEOUT = "timeout";
 	public static final String UNKNOWN = "unknown";
 	
@@ -89,6 +89,9 @@ public class VerificationReport {
 		else if ("unsat".equals(SMTStatus)) {
 			status = ALWAYS_TRUE;
 		}
+		else {
+			status = SMTStatus;
+		}
 	}
 	
 	/**
@@ -160,6 +163,20 @@ public class VerificationReport {
 	 */
 	public void setGenerateConstraintTime(int generateConstraintTime) {
 		this.generateConstraintTime = generateConstraintTime;
+	}
+	
+	public String getCounterEx(){
+		String result = "";
+		if (parameters != null) {
+			for (DefineFun param: parameters) {
+				result += param.getExpression() + " ";
+			}
+			if (ret != null) {
+				result = result + " \n " + ret.getExpression();
+			}
+		}
+		
+		return result;
 	}
 
 	public void print() {

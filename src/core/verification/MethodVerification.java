@@ -86,8 +86,10 @@ public class MethodVerification {
 	    Report report = new Report();
 	    report.setListParameter(cfg.getParameters());
 	    VerificationReport verReport = report.generateReport(result);
-	    
+	    verReport.setMethodName(method.getSimpleName());
 	    verReport.setGenerateConstraintTime((int)(end-begin));
+	    verReport.setPreCondition(preCondition);
+	    verReport.setPostCondition(postCondition);
 		
 		return verReport;
 	}
